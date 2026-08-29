@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { feedingApi, foodApi, mealPlanApi } from '../services/api';
-import { FeedingRecord, FoodIntroduction, MealPlan } from '../types';
+import { feedingApi, foodApi, mealPlanApi, babyApi } from '../services/api';
+import { FeedingRecord, FoodIntroduction, MealPlan, Baby } from '../types';
 import Layout from '../components/layout/Layout';
 import FeedingLog from '../components/nutrition/FeedingLog';
 import FeedingForm from '../components/nutrition/FeedingForm';
 import FoodIntroductionLog from '../components/nutrition/FoodIntroductionLog';
 import FoodIntroductionForm from '../components/nutrition/FoodIntroductionForm';
 import MealPlanner from '../components/nutrition/MealPlanner';
+import { 
+  ChevronLeft, 
+  Apple, 
+  ChefHat, 
+  Clock, 
+  Calendar, 
+  Plus, 
+  CheckCircle, 
+  Search, 
+  ChevronRight,
+  Award,
+  Edit,
+  Trash2
+} from 'lucide-react';
 
 type Tab = 'feeding' | 'foods' | 'meals';
 
@@ -15,21 +29,30 @@ const NutritionPage: React.FC = () => {
   const { babyId } = useParams<{ babyId: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('feeding');
+  const [baby, setBaby] = useState<Baby | undefined>();
 
   // Feeding state
   const [feedingRecords, setFeedingRecords] = useState<FeedingRecord[]>([]);
   const [editingFeeding, setEditingFeeding] = useState<FeedingRecord | undefined>();
+  const [showFeedingForm, setShowFeedingForm] = useState(false);
 
   // Food introduction state
   const [foodRecords, setFoodRecords] = useState<FoodIntroduction[]>([]);
   const [editingFood, setEditingFood] = useState<FoodIntroduction | undefined>();
+  const [showFoodForm, setShowFoodForm] = useState(false);
+  const [foodSearch, setFoodSearch] = useState('');
+  const [selectedFoodCategory, setSelectedFoodCategory] = useState<string>('all');
 
   // Meal plan state
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
   const [editingMealPlan, setEditingMealPlan] = useState<MealPlan | undefined>();
+  const [showMealForm, setShowMealForm] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Daily Meal logs checklists
+  const [todayChecked, setTodayChecked] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (!babyId) return;
@@ -39,6 +62,13 @@ const NutritionPage: React.FC = () => {
   async function loadAllData() {
     try {
       setLoading(true);
+      setError('');
+
+      // Load Baby profile info
+      const babyRes = await babyApi.getById(Number(babyId));
+      setBaby(babyRes.data.baby);
+
+      // Load all lists
       const [feedRes, foodRes, planRes] = await Promise.all([
         feedingApi.getAll(Number(babyId)),
         foodApi.getAll(Number(babyId)),
@@ -48,12 +78,48 @@ const NutritionPage: React.FC = () => {
       setFeedingRecords(feedRes.data.records || []);
       setFoodRecords(foodRes.data.records || []);
       setMealPlans(planRes.data.records || []);
+
+      // Load checklist status
+      const todayStr = new Date().toISOString().split('T')[0];
+      const items = ['breakfast', 'lunch', 'snack', 'dinner'];
+      const loaded: { [key: string]: boolean } = {};
+      items.forEach(item => {
+        const key = `${todayStr}-${babyId}-${item}`;
+        loaded[key] = localStorage.getItem(key) === 'true';
+      });
+      setTodayChecked(loaded);
+
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not load nutrition data.');
     } finally {
       setLoading(false);
     }
   }
+
+  // Calculate age string dynamically
+  function calculateAge(birthDateString: string) {
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+    const totalMonths = years * 12 + months;
+    return `${totalMonths} month${totalMonths !== 1 ? 's' : ''}`;
+  }
+
+  // Toggle meal checklist item
+  const toggleMealCheck = (item: string) => {
+    if (!babyId) return;
+    const todayStr = new Date().toISOString().split('T')[0];
+    const key = `${todayStr}-${babyId}-${item}`;
+    const newVal = !todayChecked[key];
+    setTodayChecked(prev => ({ ...prev, [key]: newVal }));
+    localStorage.setItem(key, newVal ? 'true' : 'false');
+  };
 
   // Feeding handlers
   async function saveFeeding(data: Partial<FeedingRecord>) {
@@ -69,6 +135,7 @@ const NutritionPage: React.FC = () => {
         const response = await feedingApi.create(Number(babyId), data);
         setFeedingRecords((current) => [response.data.record, ...current]);
       }
+      setShowFeedingForm(false);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not save feeding record.');
       throw err;
@@ -99,6 +166,7 @@ const NutritionPage: React.FC = () => {
         const response = await foodApi.create(Number(babyId), data);
         setFoodRecords((current) => [response.data.record, ...current]);
       }
+      setShowFoodForm(false);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not save food introduction.');
       throw err;
@@ -129,6 +197,7 @@ const NutritionPage: React.FC = () => {
         const response = await mealPlanApi.create(Number(babyId), data);
         setMealPlans((current) => [response.data.record, ...current]);
       }
+      setShowMealForm(false);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not save meal plan.');
       throw err;
@@ -145,143 +214,417 @@ const NutritionPage: React.FC = () => {
     }
   }
 
+  // Filtered solid foods introduced
+  const filteredFoods = useMemo(() => {
+    return foodRecords.filter(food => {
+      const matchesSearch = food.food_name.toLowerCase().includes(foodSearch.toLowerCase()) ||
+                            (food.notes || '').toLowerCase().includes(foodSearch.toLowerCase());
+      
+      const categoryValue = food.reaction || 'introduced'; // reaction or generic
+      const matchesCategory = selectedFoodCategory === 'all' || 
+                               categoryValue.toLowerCase() === selectedFoodCategory.toLowerCase();
+                               
+      return matchesSearch && matchesCategory;
+    });
+  }, [foodRecords, foodSearch, selectedFoodCategory]);
+
   if (loading) {
     return (
       <Layout>
-        <p className="subtext">Loading nutrition data…</p>
+        <div className="flex flex-col gap-4 py-8">
+          <div className="h-8 bg-slate-100 animate-pulse rounded w-1/4"></div>
+          <div className="h-12 bg-slate-100 animate-pulse rounded-full max-w-md"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            <div className="h-64 bg-slate-100 animate-pulse rounded-3xl"></div>
+            <div className="h-64 bg-slate-100 animate-pulse rounded-3xl"></div>
+          </div>
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="nutrition-page">
-        <div className="back-link">
-          <button onClick={() => navigate(`/baby/${babyId}`)}>← Back to baby profile</button>
-        </div>
-        <h1>Nutrition & Feeding</h1>
-        {error && <p className="error" role="alert">{error}</p>}
+      {/* Back button */}
+      <div className="mb-6">
+        <button 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-1 text-slate-500 hover:text-slate-800 font-bold text-sm bg-transparent border-none cursor-pointer"
+        >
+          <ChevronLeft size={16} />
+          <span>Back to Dashboard</span>
+        </button>
+      </div>
 
-        <div className="tabs">
-          <button
-            className={`tab-button ${activeTab === 'feeding' ? 'active' : ''}`}
-            onClick={() => setActiveTab('feeding')}
-          >
-            Feeding Log
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'foods' ? 'active' : ''}`}
-            onClick={() => setActiveTab('foods')}
-          >
-            Food Introduction
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'meals' ? 'active' : ''}`}
-            onClick={() => setActiveTab('meals')}
-          >
-            Meal Plans
-          </button>
+      <header className="mb-8 flex justify-between items-start flex-wrap gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>
+            Nutrition & Feeding
+          </h1>
+          {baby && (
+            <p className="text-slate-500 font-medium mt-1">
+              🥗 {baby.name} &bull; <span className="font-semibold text-sky-600">{calculateAge(baby.date_of_birth)} old</span>
+            </p>
+          )}
         </div>
 
+        {/* Dynamic add button based on current tab */}
         {activeTab === 'feeding' && (
-          <section className="two-column-layout">
-            <div>
-              <div className="page-illustration wobbly-frame" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-nutrition.jpg" alt="Baby feeding" style={{ width: '100%', borderRadius: 'inherit' }} />
+          <button
+            onClick={() => {
+              setEditingFeeding(undefined);
+              setShowFeedingForm(!showFeedingForm);
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
+          >
+            <Plus size={16} />
+            <span>Log Feeding</span>
+          </button>
+        )}
+        {activeTab === 'foods' && (
+          <button
+            onClick={() => {
+              setEditingFood(undefined);
+              setShowFoodForm(!showFoodForm);
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
+          >
+            <Plus size={16} />
+            <span>Introduce Solid Food</span>
+          </button>
+        )}
+        {activeTab === 'meals' && (
+          <button
+            onClick={() => {
+              setEditingMealPlan(undefined);
+              setShowMealForm(!showMealForm);
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
+          >
+            <Plus size={16} />
+            <span>Create Meal Plan</span>
+          </button>
+        )}
+      </header>
+
+      {error && <div className="error-banner mb-6">{error}</div>}
+
+      {/* Tabs list */}
+      <div className="flex border-b border-slate-100 mb-8 gap-6">
+        {[
+          { key: 'feeding', label: '🍼 Feeding Logs' },
+          { key: 'foods', label: '🥗 Food Introduction' },
+          { key: 'meals', label: '🍲 Weekly Meal Planner' }
+        ].map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as Tab)}
+            className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all cursor-pointer bg-transparent border-none ${activeTab === tab.key ? 'border-sky-500 text-sky-600' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* 1. Feeding Tab */}
+      {activeTab === 'feeding' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Today's meals checklist section */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Today's Meals</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { key: 'breakfast', label: '🌅 Breakfast', time: '08:00 AM' },
+                  { key: 'lunch', label: '☀️ Lunch', time: '12:30 PM' },
+                  { key: 'snack', label: '🍎 Afternoon Snack', time: '04:00 PM' },
+                  { key: 'dinner', label: '🌙 Dinner', time: '07:30 PM' }
+                ].map(meal => {
+                  const todayStr = new Date().toISOString().split('T')[0];
+                  const isChecked = !!todayChecked[`${todayStr}-${babyId}-${meal.key}`];
+                  return (
+                    <button
+                      key={meal.key}
+                      onClick={() => toggleMealCheck(meal.key)}
+                      className={`flex flex-col p-4 border rounded-2xl text-left cursor-pointer transition-all ${isChecked ? 'bg-emerald-50/40 border-emerald-200 text-emerald-950' : 'bg-slate-50/50 border-slate-100 hover:bg-slate-50 text-slate-800'}`}
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-bold text-sm">{meal.label}</span>
+                        <CheckCircle size={16} className={isChecked ? 'text-emerald-500 fill-emerald-500/20' : 'text-slate-300'} />
+                      </div>
+                      <span className="text-xs text-slate-400 mt-2 font-medium">{meal.time}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <h2>Feeding Records</h2>
+            </div>
+
+            {/* Feeding details form overlay */}
+            {showFeedingForm && (
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 mb-4">{editingFeeding ? 'Edit Feeding Log Entry' : 'Log Feeding Entry'}</h3>
+                <FeedingForm
+                  record={editingFeeding}
+                  onSubmit={saveFeeding}
+                  onCancel={() => setShowFeedingForm(false)}
+                />
+              </div>
+            )}
+
+            {/* Feeding records table log listing */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Feeding Log</h3>
               <FeedingLog
                 records={feedingRecords}
-                onEdit={setEditingFeeding}
+                onEdit={(r) => {
+                  setEditingFeeding(r);
+                  setShowFeedingForm(true);
+                }}
                 onDelete={deleteFeeding}
               />
             </div>
-            <section className="form-panel">
-              <h2>{editingFeeding ? 'Edit Feeding' : 'Log Feeding'}</h2>
-              <FeedingForm
-                record={editingFeeding}
-                onSubmit={saveFeeding}
-                onCancel={() => setEditingFeeding(undefined)}
-              />
-            </section>
-          </section>
-        )}
 
-        {activeTab === 'foods' && (
-          <section className="two-column-layout">
-            <div>
-              <div className="page-illustration wobbly-frame-alt" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-nutrition-meals.jpg" alt="Healthy baby foods" style={{ width: '100%', borderRadius: 'inherit' }} />
+          </div>
+
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+            <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Feeding Guidance</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
+              Pediatric recommendations suggest offering breast milk or formula as the primary source of nutrition for babies up to 12 months.
+            </p>
+            <div className="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 text-xs font-semibold text-sky-850 flex gap-3">
+              <span className="text-xl">🍼</span>
+              <div>
+                <span className="font-bold block mb-1">Consistency check</span>
+                Verify the baby's feeding schedule remains uniform to encourage natural sleeping loops.
               </div>
-              <h2>Foods Introduced</h2>
-              <FoodIntroductionLog
-                records={foodRecords}
-                onEdit={setEditingFood}
-                onDelete={deleteFood}
-              />
             </div>
-            <section className="form-panel">
-              <h2>{editingFood ? 'Edit Food' : 'New Food'}</h2>
-              <FoodIntroductionForm
-                record={editingFood}
-                onSubmit={saveFood}
-                onCancel={() => setEditingFood(undefined)}
-              />
-            </section>
-          </section>
-        )}
+          </div>
+        </div>
+      )}
 
-        {activeTab === 'meals' && (
-          <section className="two-column-layout">
-            <div>
-              <div className="page-illustration wobbly-frame" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-nutrition-meals.jpg" alt="Meal planning guide" style={{ width: '100%', borderRadius: 'inherit' }} />
+      {/* 2. Food Introduction Tab */}
+      {activeTab === 'foods' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Search and filters bar */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm flex gap-4 items-center flex-wrap">
+              <div className="relative flex-grow max-w-md">
+                <Search size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search foods (e.g. Avocado, Carrot)..."
+                  value={foodSearch}
+                  onChange={(e) => setFoodSearch(e.target.value)}
+                  className="pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-100 rounded-full font-medium text-sm w-full mt-0 focus:bg-white"
+                />
               </div>
-              <h2>Meal Plans</h2>
-              {mealPlans.length === 0 ? (
-                <p className="empty-state">No meal plans yet.</p>
-              ) : (
-                <div className="meal-plans-list">
-                  {mealPlans.map((plan) => (
-                    <article key={plan.id} className="record-item">
+
+              {/* Categorical select filter */}
+              <div className="flex border border-slate-100 rounded-full p-1 bg-slate-50/50">
+                {[
+                  { key: 'all', label: 'All Foods' },
+                  { key: 'no_reaction', label: 'Introduced' },
+                  { key: 'allergic', label: 'Allergy alert' }
+                ].map(cat => (
+                  <button
+                    key={cat.key}
+                    onClick={() => setSelectedFoodCategory(cat.key)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${selectedFoodCategory === cat.key ? 'bg-white text-sky-600 shadow-sm' : 'text-slate-500 hover:text-slate-800 bg-transparent'}`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Food Form overlay */}
+            {showFoodForm && (
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 mb-4">{editingFood ? 'Edit Solid Food Log' : 'Introduce New Solid Food'}</h3>
+                <FoodIntroductionForm
+                  record={editingFood}
+                  onSubmit={saveFood}
+                  onCancel={() => setShowFoodForm(false)}
+                />
+              </div>
+            )}
+
+            {/* Custom visual Food Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredFoods.map((food, idx) => {
+                const isAllergic = food.reaction?.toLowerCase() === 'allergic' || food.reaction?.toLowerCase() === 'allergy';
+                return (
+                  <div key={food.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:shadow-slate-100/50 transition-all flex justify-between items-start">
+                    <div className="flex gap-4 items-start">
+                      {/* Food category avatar icon placeholder based on name */}
+                      <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">
+                        {food.food_name.toLowerCase().includes('banana') ? '🍌' :
+                         food.food_name.toLowerCase().includes('apple') ? '🍎' :
+                         food.food_name.toLowerCase().includes('carrot') ? '🥕' :
+                         food.food_name.toLowerCase().includes('potato') ? '🍠' :
+                         food.food_name.toLowerCase().includes('egg') ? '🥚' :
+                         food.food_name.toLowerCase().includes('rice') ? '🌾' : '🥑'}
+                      </div>
+
                       <div>
-                        <h3>Week of {plan.week_start_date}</h3>
-                        {plan.notes && <p>{plan.notes}</p>}
+                        <h4 className="font-bold text-slate-800 text-base">{food.food_name}</h4>
+                        <span className={`inline-block px-2.5 py-0.5 rounded-full text-xxs font-semibold mt-1 ${isAllergic ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                          {isAllergic ? '⚠️ Allergy Alert' : '✅ Introduced'}
+                        </span>
+                        
+                        <p className="text-xs text-slate-400 font-semibold mt-2">
+                          📅 {new Date(food.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+
+                        {food.notes && (
+                          <p className="text-xs text-slate-500 italic mt-2 border-t border-slate-50 pt-1">
+                            {food.notes}
+                          </p>
+                        )}
                       </div>
-                      <div className="record-actions">
-                        <button
-                          className="edit-button"
-                          onClick={() => setEditingMealPlan(plan)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="remove-button"
-                          onClick={() => {
-                            if (window.confirm('Delete this meal plan?')) {
-                              deleteMealPlan(plan.id);
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </article>
-                  ))}
+                    </div>
+
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingFood(food);
+                          setShowFoodForm(true);
+                        }}
+                        className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Delete introduced food log for ${food.food_name}?`)) {
+                            deleteFood(food.id);
+                          }
+                        }}
+                        className="p-1 hover:bg-red-50 rounded text-slate-400 hover:text-red-600 transition-colors border-none bg-transparent cursor-pointer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {filteredFoods.length === 0 && (
+                <div className="col-span-2 text-center py-12 bg-white border border-slate-100 rounded-3xl">
+                  <span className="text-4xl block mb-3">🥗</span>
+                  <p className="text-sm font-semibold text-slate-600">No solid foods tracked</p>
+                  <p className="text-xs text-slate-400 mt-1">Start introducing soft fruits, veggies, and grains</p>
                 </div>
               )}
             </div>
-            <section className="form-panel">
-              <h2>{editingMealPlan ? 'Edit Meal Plan' : 'Create Meal Plan'}</h2>
-              <MealPlanner
-                mealPlan={editingMealPlan}
-                onSubmit={saveMealPlan}
-                onCancel={() => setEditingMealPlan(undefined)}
-              />
-            </section>
-          </section>
-        )}
-      </div>
+
+          </div>
+
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+            <h3 className="text-lg font-bold text-slate-800 mb-3" style={{ fontFamily: 'Plus Jakarta Sans' }}>Food Introduction Rules</h3>
+            <ul className="flex flex-col gap-3 text-xs text-slate-500 font-semibold pl-4 list-disc">
+              <li>Introduce only one new single-ingredient food at a time.</li>
+              <li>Wait 3 to 5 days before introducing another food to monitor allergies.</li>
+              <li>Always mash, puree, or chop solid foods to ensure safety.</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Meal Plans Tab */}
+      {activeTab === 'meals' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Meal Form overlay */}
+            {showMealForm && (
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 mb-4">{editingMealPlan ? 'Edit Weekly Meal Plan' : 'Create Weekly Meal Plan'}</h3>
+                <MealPlanner
+                  mealPlan={editingMealPlan}
+                  onSubmit={saveMealPlan}
+                  onCancel={() => setShowMealForm(false)}
+                />
+              </div>
+            )}
+
+            {/* Meal plans list */}
+            {mealPlans.length === 0 ? (
+              <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl shadow-sm">
+                <div className="text-4xl mb-4">🍲</div>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">No weekly meal plans set</h3>
+                <p className="text-slate-500 max-w-sm mx-auto mb-6 text-xs leading-relaxed">
+                  Design structured weekly meal charts to monitor balanced nutrition ratios.
+                </p>
+                <button
+                  onClick={() => setShowMealForm(true)}
+                  className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all text-sm cursor-pointer"
+                >
+                  Create First Meal Plan
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {mealPlans.map((plan) => (
+                  <div key={plan.id} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award size={18} className="text-amber-500" />
+                        <h4 className="font-bold text-slate-800 text-base">Week of {plan.week_start_date}</h4>
+                      </div>
+                      
+                      {plan.notes && (
+                        <div className="text-sm text-slate-600 mt-2 bg-slate-50/50 p-4 border border-slate-100 rounded-2xl whitespace-pre-line leading-relaxed">
+                          {plan.notes}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-1 ml-4">
+                      <button
+                        onClick={() => {
+                          setEditingMealPlan(plan);
+                          setShowMealForm(true);
+                        }}
+                        className="p-1.5 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to permanently delete this weekly meal plan?')) {
+                            deleteMealPlan(plan.id);
+                          }
+                        }}
+                        className="p-1.5 hover:bg-red-50 rounded text-slate-450 hover:text-red-600 transition-colors border-none bg-transparent cursor-pointer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+            <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Weekly Nutrition</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
+              Planning meals ahead ensures your baby gets a variety of grains, fruits, vegetables, and protein-rich items throughout the week.
+            </p>
+            <div className="p-4 bg-amber-50/50 rounded-2xl border border-amber-100 text-xs font-semibold text-amber-900 flex gap-3">
+              <span className="text-xl">🍲</span>
+              <div>
+                <span className="font-bold block mb-1">Pre-planning helper</span>
+                Log ingredients you plan to offer this week to avoid duplicate groceries.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

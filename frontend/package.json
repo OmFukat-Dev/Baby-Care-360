@@ -7,23 +7,25 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "lucide-react": "^1.37.0",
+    "postcss": "^8.4.31",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
     "react-router-dom": "^6.20.0",
-    "axios": "^1.6.0",
+    "react-scripts": "5.0.1",
+    "recharts": "^3.10.1",
     "tailwindcss": "^3.4.0",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "clsx": "^2.0.0",
-    "date-fns": "^2.30.0"
+    "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "typescript": "^5.3.0",
+    "@types/node": "^20.10.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@types/node": "^20.10.0"
+    "typescript": "^5.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

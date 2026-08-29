@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Navigation from './Navigation';
+import Sidebar from './Sidebar';
+import BottomNav from './BottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,7 +11,25 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user } = useAuth();
+  const location = useLocation();
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Extract babyId from location path dynamically
+  const match = location.pathname.match(/\/(?:baby|growth|nutrition|development|health-records|analytics)\/(\d+)/);
+  const pathBabyId = match ? parseInt(match[1]) : undefined;
+  
+  // Keep active baby ID cached in localStorage
+  const [activeBabyId, setActiveBabyId] = useState<number | undefined>(() => {
+    const cached = localStorage.getItem('active_baby_id');
+    return cached ? parseInt(cached) : undefined;
+  });
+
+  useEffect(() => {
+    if (pathBabyId) {
+      localStorage.setItem('active_baby_id', pathBabyId.toString());
+      setActiveBabyId(pathBabyId);
+    }
+  }, [pathBabyId]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +43,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // 1. Authenticated User Layout (Collapsible Sidebar + Bottom Nav)
+  if (user) {
+    return (
+      <div className="app-viewport">
+        <Sidebar currentBabyId={activeBabyId} />
+        
+        <div className="app-main-layout">
+          <main className="app-content-container">
+            {children}
+          </main>
+          
+          <BottomNav currentBabyId={activeBabyId} />
+        </div>
+
+        {showScrollTop && (
+          <button className="kido-scroll-top" onClick={scrollToTop} aria-label="Scroll to top">
+            <i className="fa-solid fa-arrow-up"></i>
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  // 2. Guest/Public Layout (Landing, Login, Register views)
   return (
     <div className="layout">
       {/* Sticky Topbar */}
