@@ -5,19 +5,13 @@ import { FeedingRecord, FoodIntroduction, MealPlan, Baby } from '../types';
 import Layout from '../components/layout/Layout';
 import FeedingLog from '../components/nutrition/FeedingLog';
 import FeedingForm from '../components/nutrition/FeedingForm';
-import FoodIntroductionLog from '../components/nutrition/FoodIntroductionLog';
 import FoodIntroductionForm from '../components/nutrition/FoodIntroductionForm';
 import MealPlanner from '../components/nutrition/MealPlanner';
 import { 
   ChevronLeft, 
-  Apple, 
-  ChefHat, 
-  Clock, 
-  Calendar, 
   Plus, 
   CheckCircle, 
   Search, 
-  ChevronRight,
   Award,
   Edit,
   Trash2

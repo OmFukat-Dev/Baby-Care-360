@@ -9,16 +9,9 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  Calendar, 
-  TrendingUp, 
   CheckCircle, 
   Clock, 
-  AlertCircle, 
-  ShieldCheck, 
   PlusCircle,
-  Activity,
-  Heart,
-  User as UserIcon,
   ChevronDown
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -30,7 +23,6 @@ const Dashboard: React.FC = () => {
   const [selectedBabyIndex, setSelectedBabyIndex] = useState<number>(0);
   const [editingBaby, setEditingBaby] = useState<Baby | undefined>();
   const [showProfileForm, setShowProfileForm] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   // Loaded statistics & tracking records for selected baby
@@ -65,7 +57,6 @@ const Dashboard: React.FC = () => {
 
   async function loadBabies() {
     try {
-      setLoading(true);
       const response = await babyApi.getAll();
       const loaded = response.data.babies || [];
       setBabies(loaded);
@@ -76,8 +67,6 @@ const Dashboard: React.FC = () => {
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not load baby profiles.');
-    } finally {
-      setLoading(false);
     }
   }
 

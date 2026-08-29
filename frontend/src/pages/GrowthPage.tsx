@@ -5,14 +5,10 @@ import { GrowthMeasurement, Baby } from '../types';
 import Layout from '../components/layout/Layout';
 import GrowthForm from '../components/growth/GrowthForm';
 import { 
-  TrendingUp, 
-  Calendar, 
   ChevronLeft, 
   Plus, 
   Edit, 
-  Trash2,
-  Activity,
-  Heart
+  Trash2
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -21,7 +17,6 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend, 
   ResponsiveContainer 
 } from 'recharts';
 

@@ -4,20 +4,15 @@ import { milestoneApi, sleepApi, medicineApi, babyApi } from '../services/api';
 import { Milestone, SleepRecord, MedicineRecord, Baby } from '../types';
 import Layout from '../components/layout/Layout';
 import MilestoneForm from '../components/development/MilestoneForm';
-import MilestoneList from '../components/development/MilestoneList';
 import SleepForm from '../components/development/SleepForm';
 import SleepLog from '../components/development/SleepLog';
 import MedicineForm from '../components/development/MedicineForm';
 import MedicineList from '../components/development/MedicineList';
 import { 
   ChevronLeft, 
-  Brain, 
   Moon, 
   Plus, 
-  CheckCircle2, 
-  Clock, 
-  Info,
-  Calendar
+  CheckCircle2
 } from 'lucide-react';
 
 type Tab = 'milestones' | 'sleep' | 'medicines';
@@ -123,16 +118,6 @@ const DevelopmentPage: React.FC = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not save milestone.');
       throw err;
-    }
-  }
-
-  async function deleteMilestone(id: number) {
-    try {
-      setError('');
-      await milestoneApi.delete(Number(babyId), id);
-      setMilestones((current) => current.filter((m) => m.id !== id));
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Could not delete milestone.');
     }
   }
 

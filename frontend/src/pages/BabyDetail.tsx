@@ -5,15 +5,8 @@ import { Baby, VaccinationRecord, Checkup, PolioRecord } from '../types';
 import Layout from '../components/layout/Layout';
 import { 
   ChevronLeft, 
-  User as UserIcon, 
   ShieldAlert, 
-  Activity, 
-  Calendar, 
   Phone, 
-  AlertTriangle,
-  Award,
-  Heart,
-  FileText,
   Clock
 } from 'lucide-react';
 
