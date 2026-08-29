@@ -501,7 +501,16 @@ const Dashboard: React.FC = () => {
           {/* Right Columns (Smaller: Upcoming, Completeness Metrics) */}
           <div className="flex flex-col gap-8">
             
-            {/* Upcoming Timeline Section */}
+            {/* Child Cover Illustration Card */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm overflow-hidden flex flex-col items-center justify-center text-center animate-fade-in hover-scale">
+              <img 
+                src="/hero-kid.jpg" 
+                alt="Happy baby tracking illustration" 
+                className="w-full h-36 object-cover rounded-2xl mb-4" 
+              />
+              <h4 className="font-bold text-slate-800 text-sm">Grow healthy day by day</h4>
+              <p className="text-xs text-slate-400 mt-1">Keep logging daily metrics to get customized recommendations!</p>
+            </div>
             <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
               <div className="mb-6 flex justify-between items-center">
                 <div>

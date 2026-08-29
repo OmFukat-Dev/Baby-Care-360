@@ -144,9 +144,17 @@ const HealthRecordsPage: React.FC = () => {
         </div>
 
         {activeTab === 'timeline' && (
-          <section>
-            <h2>Health Timeline - All Events</h2>
-            <TimelineView events={timelineEvents} />
+          <section className="two-column-layout animate-fade-in">
+            <div>
+              <div className="page-illustration wobbly-frame" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
+                <img src="/baby-analytics.jpg" alt="Health analysis timeline" style={{ width: '100%', borderRadius: 'inherit' }} />
+              </div>
+              <h2>Health Timeline</h2>
+              <p className="subtext">Chronological log of child developmental records, vaccinations, measurements, and pediatrician visits.</p>
+            </div>
+            <section className="form-panel">
+              <TimelineView events={timelineEvents} />
+            </section>
           </section>
         )}
 
