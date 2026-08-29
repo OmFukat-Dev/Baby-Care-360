@@ -27,14 +27,14 @@ const TimelineView: React.FC<TimelineViewProps> = ({ events }) => {
 
   const getEventColor = (type: string) => {
     const colors: Record<string, string> = {
-      vaccination: '#d4edda',
-      checkup: '#d1ecf1',
-      growth: '#fff3cd',
-      milestone: '#e7d4f5',
-      food: '#f8f5e6',
-      polio: '#d4edda',
+      vaccination: '#f0fdf4', // soft green
+      checkup: '#ecfdf5', // soft teal
+      growth: '#fffbeb', // soft yellow
+      milestone: '#f5f3ff', // soft lavender
+      food: '#fff7ed', // soft peach
+      polio: '#f0fdf4', // soft green
     };
-    return colors[type] || '#f8f9fa';
+    return colors[type] || '#fcfbfa';
   };
 
   const getTypeLabel = (type: string) => {
