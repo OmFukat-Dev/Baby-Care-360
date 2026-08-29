@@ -363,7 +363,7 @@ const Dashboard: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-8">
             
             {/* Baby Overview Profile Card */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6 flex-wrap md:flex-nowrap">
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6 flex-wrap md:flex-nowrap hover-scale animate-fade-in">
               {/* Photo frame */}
               <div className="kido-avatar-circle flex-shrink-0 w-24 h-24 bg-sky-50 text-slate-700 flex items-center justify-center text-4xl border-2 border-sky-100 relative">
                 👶
@@ -426,7 +426,7 @@ const Dashboard: React.FC = () => {
                     <button
                       key={item.key}
                       onClick={() => toggleCheck(item.key)}
-                      className={`flex flex-col items-start p-3.5 border rounded-2xl text-left cursor-pointer transition-all ${isChecked ? 'bg-emerald-50/50 border-emerald-200 text-emerald-950' : 'bg-slate-50/50 border-slate-100 text-slate-800 hover:bg-slate-50'}`}
+                      className={`flex flex-col items-start p-3.5 border rounded-2xl text-left cursor-pointer transition-all hover-scale ${isChecked ? 'bg-emerald-50/50 border-emerald-200 text-emerald-950' : 'bg-slate-50/50 border-slate-100 text-slate-800 hover:bg-slate-50'}`}
                     >
                       <div className="flex items-center gap-2 w-full justify-between">
                         <span className="font-bold text-sm">{item.label}</span>
@@ -441,7 +441,7 @@ const Dashboard: React.FC = () => {
 
             {/* Suggestions Widget Section */}
             {suggestions.length > 0 && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm animate-glow">
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Suggested for {selectedBaby.name}</h3>
                   <p className="text-xs text-slate-400 mt-0.5">Personalized recommendations tailored to your child's age group</p>
@@ -451,7 +451,8 @@ const Dashboard: React.FC = () => {
                   {suggestions.map((item, idx) => (
                     <div 
                       key={idx} 
-                      className="p-4 border border-slate-100 rounded-2xl flex flex-col items-start bg-slate-50/30 hover:shadow-md hover:shadow-slate-100/50 transition-all cursor-pointer"
+                      className="p-4 border border-slate-100 rounded-2xl flex flex-col items-start bg-slate-50/30 animate-float hover-scale cursor-pointer"
+                      style={{ animationDelay: `${idx * 0.4}s` }}
                       onClick={() => {
                         if (item.category === 'nutrition') navigate(`/nutrition/${selectedBaby.id}`);
                         else if (item.category === 'growth') navigate(`/growth/${selectedBaby.id}`);

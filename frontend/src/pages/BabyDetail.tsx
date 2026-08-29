@@ -152,7 +152,7 @@ const BabyDetail: React.FC = () => {
       {error && <div className="error-banner mb-6" role="alert">{error}</div>}
 
       {/* Profile Header Summary */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6 mb-8 flex-wrap md:flex-nowrap">
+      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6 mb-8 flex-wrap md:flex-nowrap hover-scale animate-fade-in">
         <div className="w-20 h-20 bg-sky-50 rounded-full flex items-center justify-center text-3xl border-2 border-sky-100">
           👶
         </div>
