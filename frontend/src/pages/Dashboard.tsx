@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { babyApi } from '../services/api';
@@ -50,21 +50,13 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const suggestions = useMemo(() => {
-    if (!babies.length) {
-      return [
-        { icon: '👶', title: 'Add your first baby profile', text: 'Start with a name, birth date, and care details to unlock personalized suggestions.' },
-        { icon: '💡', title: 'Create a weekly routine', text: 'Set feeding, naps, and playtime habits to keep every day calm and consistent.' },
-        { icon: '📅', title: 'Plan reminders', text: 'Add vaccination and checkup reminders so important milestones never get missed.' },
-      ];
-    }
+  const [suggestions, setSuggestions] = useState<any[]>([]);
 
-    return [
-      { icon: '💧', title: 'Hydration check', text: 'Keep an eye on feeds and fluids, especially during warmer days and active play.' },
-      { icon: '🛌', title: 'Sleep routine', text: 'Review naps and bedtime patterns to maintain a calmer evening rhythm.' },
-      { icon: '🌞', title: 'Development boost', text: 'Try a few minutes of tummy time or sensory play today to support growth and movement.' },
-    ];
-  }, [babies]);
+  const defaultSuggestions = [
+    { icon: '👶', title: 'Add your first baby profile', text: 'Start with a name, birth date, and care details to unlock personalized suggestions.' },
+    { icon: '💡', title: 'Create a weekly routine', text: 'Set feeding, naps, and playtime habits to keep every day calm and consistent.' },
+    { icon: '📅', title: 'Plan reminders', text: 'Add vaccination and checkup reminders so important milestones never get missed.' },
+  ];
 
   useEffect(() => {
     loadBabies();
@@ -74,7 +66,33 @@ const Dashboard: React.FC = () => {
     try {
       setLoading(true);
       const response = await babyApi.getAll();
-      setBabies(response.data.babies || []);
+      const loadedBabies = response.data.babies || [];
+      setBabies(loadedBabies);
+      
+      if (loadedBabies.length > 0) {
+        try {
+          const suggestionsRes = await babyApi.getSuggestions(loadedBabies[0].id);
+          const rawSuggestions = suggestionsRes.data.suggestions || [];
+          if (rawSuggestions.length > 0) {
+            setSuggestions(rawSuggestions.slice(0, 3));
+          } else {
+            setSuggestions([
+              { icon: '💧', title: 'Hydration check', text: 'Keep an eye on feeds and fluids, especially during warmer days and active play.' },
+              { icon: '🛌', title: 'Sleep routine', text: 'Review naps and bedtime patterns to maintain a calmer evening rhythm.' },
+              { icon: '🌞', title: 'Development boost', text: 'Try a few minutes of tummy time or sensory play today to support growth and movement.' },
+            ]);
+          }
+        } catch (sErr) {
+          console.error("Could not load baby suggestions:", sErr);
+          setSuggestions([
+            { icon: '💧', title: 'Hydration check', text: 'Keep an eye on feeds and fluids, especially during warmer days and active play.' },
+            { icon: '🛌', title: 'Sleep routine', text: 'Review naps and bedtime patterns to maintain a calmer evening rhythm.' },
+            { icon: '🌞', title: 'Development boost', text: 'Try a few minutes of tummy time or sensory play today to support growth and movement.' },
+          ]);
+        }
+      } else {
+        setSuggestions(defaultSuggestions);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not load baby profiles.');
     } finally {
@@ -169,7 +187,7 @@ const Dashboard: React.FC = () => {
               <div style={{ fontSize: '2.2rem', flexShrink: 0 }}>{item.icon}</div>
               <div>
                 <h4 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: '0.35rem' }}>{item.title}</h4>
-                <p style={{ color: 'var(--text-soft)', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>{item.text}</p>
+                <p style={{ color: 'var(--text-soft)', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>{item.description || item.text}</p>
               </div>
             </div>
           ))}

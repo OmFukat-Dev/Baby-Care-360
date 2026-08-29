@@ -15,6 +15,7 @@ marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flask-migrate = "*"
 requests = "*"
+python-dateutil = "*"
 
 [dev-packages]
 pytest = "*"

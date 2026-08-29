@@ -7,9 +7,9 @@ vaccination history.
 
 from datetime import date, timedelta
 from typing import List, Dict, Any, Optional
-from backend.models.user import Baby, VaccinationRecord
-from backend.services.age_service import AgeService
-from backend.utils.constants import VACCINATION_SCHEDULES
+from models import Baby, VaccinationRecord
+from services.age_service import AgeService
+from utils.constants import VACCINATION_SCHEDULES
 
 
 class VaccinationService:

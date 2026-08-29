@@ -7,9 +7,9 @@ records, and growth patterns.
 
 from datetime import date, timedelta
 from typing import List, Dict, Any, Optional
-from backend.models.user import Baby, GrowthMeasurement
-from backend.services.age_service import AgeService
-from backend.utils.constants import GROWTH_MILESTONES
+from models import Baby, GrowthMeasurement
+from services.age_service import AgeService
+from utils.constants import GROWTH_MILESTONES
 
 
 class GrowthService:

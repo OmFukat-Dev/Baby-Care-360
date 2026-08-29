@@ -197,3 +197,66 @@ def delete_baby(baby_id):
             'error': 'server_error',
             'message': str(e)
         }), 500
+
+
+@babies_bp.route('/<int:baby_id>/suggestions', methods=['GET'])
+@token_required
+def get_baby_suggestions(baby_id):
+    """Get personalized recommendations for a specific baby."""
+    try:
+        from services.growth_service import GrowthService
+        from services.nutrition_service import NutritionService
+        from services.development_service import DevelopmentService
+        from services.vaccination_service import VaccinationService
+
+        baby = Baby.query.get(baby_id)
+        if not baby:
+            return jsonify({
+                'success': False,
+                'error': 'not_found',
+                'message': 'Baby not found'
+            }), 404
+        
+        # Check ownership
+        if baby.user_id != request.current_user.id:
+            return jsonify({
+                'success': False,
+                'error': 'forbidden',
+                'message': 'You do not have permission to view suggestions for this baby'
+            }), 403
+
+        # Aggregate suggestions from all services
+        suggestions = []
+        
+        # 1. Nutrition suggestions
+        suggestions.extend(NutritionService.get_feeding_suggestions(baby))
+        suggestions.extend(NutritionService.get_allergy_safety_suggestions(baby))
+        suggestions.extend(NutritionService.get_hydration_suggestions(baby))
+        
+        # 2. Growth suggestions
+        suggestions.extend(GrowthService.get_growth_tracking_suggestions(baby))
+        
+        # 3. Development suggestions
+        suggestions.extend(DevelopmentService.get_developmental_activity_suggestions(baby))
+        suggestions.extend(DevelopmentService.get_milestone_tracking_suggestions(baby))
+        
+        # 4. Vaccination suggestions
+        suggestions.extend(VaccinationService.get_vaccination_suggestions(baby))
+        suggestions.extend(VaccinationService.get_vaccine_information_suggestions(baby))
+
+        # Prioritize suggestions: High -> Medium -> Low/Info
+        priority_map = {'high': 1, 'medium': 2, 'info': 3, 'low': 4}
+        suggestions.sort(key=lambda s: priority_map.get(s.get('priority', 'info'), 3))
+
+        return jsonify({
+            'success': True,
+            'suggestions': suggestions
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': 'server_error',
+            'message': str(e)
+        }), 500
+

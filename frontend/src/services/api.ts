@@ -90,6 +90,8 @@ export const babyApi = {
     apiClient.put(`/babies/${id}`, data),
   delete: (id: number) =>
     apiClient.delete(`/babies/${id}`),
+  getSuggestions: (id: number) =>
+    apiClient.get(`/babies/${id}/suggestions`),
 };
 
 // Vaccination endpoints

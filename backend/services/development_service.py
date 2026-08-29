@@ -7,9 +7,9 @@ tracking suggestions.
 
 from datetime import date, timedelta
 from typing import List, Dict, Any, Optional
-from backend.models.user import Baby, Milestone
-from backend.services.age_service import AgeService
-from backend.utils.constants import DEVELOPMENTAL_ACTIVITIES
+from models import Baby, Milestone
+from services.age_service import AgeService
+from utils.constants import DEVELOPMENTAL_ACTIVITIES
 
 
 class DevelopmentService:

@@ -7,9 +7,9 @@ feeding history.
 
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional
-from backend.models.user import Baby, FeedingRecord, FoodIntroduction, MealPlan
-from backend.services.age_service import AgeService
-from backend.utils.constants import NUTRITION_GUIDELINES, FOOD_INTRODUCTION_GUIDE
+from models import Baby, FeedingRecord, FoodIntroduction, MealPlan
+from services.age_service import AgeService
+from utils.constants import NUTRITION_GUIDELINES, FOOD_INTRODUCTION_GUIDE
 
 
 class NutritionService:
