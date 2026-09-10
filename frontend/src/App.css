@@ -1,8 +1,9 @@
 :root {
-  --bg: #f9f8f4;
-  --bg-strong: #f3f1e8;
-  --surface: #fdfcf9;
-  --surface-strong: #faf9f3;
+  --bg: #f8fafc;
+  --bg-strong: #f1f5f9;
+  --surface: #ffffff;
+  --surface-strong: #f8fafc;
+  --surface-glass: rgba(255, 255, 255, 0.94);
   --primary: #0ea5e9;
   --primary-dark: #0369a1;
   --primary-light: #e0f2fe;
@@ -12,20 +13,22 @@
   --success: #10b981;
   --text: #0f172a;
   --text-soft: #475569;
-  --border: #ebdccb70; /* warm thin borders */
-  --shadow: 0 10px 30px -10px rgba(187, 168, 143, 0.12); /* warm shadows */
+  --border: rgba(14, 165, 233, 0.12);
+  --border-light: rgba(226, 232, 240, 0.8);
+  --shadow: 0 14px 34px -6px rgba(14, 165, 233, 0.09), 0 4px 12px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 25px 50px -12px rgba(14, 165, 233, 0.16), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
   --pastel-sky: #e0f2fe;
   --pastel-peach: #fef2f2;
   --pastel-mint: #ecfdf5;
   --pastel-lilac: #f5f3ff;
   --pastel-cream: #fffbeb;
-  --brand-bg: #f9f8f4;
+  --brand-bg: #f8fafc;
   --brand-aqua: #0ea5e9;
   --brand-peach: #fe4f70;
   --brand-mint: #10b981;
-  --brand-light: #f9f8f4;
-  --site-beige: #f9f8f4;
-  --site-beige-deep: #f3f1e8;
+  --brand-light: #f8fafc;
+  --site-beige: #f8fafc;
+  --site-beige-deep: #f1f5f9;
 }
 
 * {
@@ -2844,8 +2847,10 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
 /* Collapsible Sidebar styling */
 .kido-sidebar {
   width: 260px;
-  background: var(--bg-strong);
-  border-right: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(226, 232, 240, 0.85);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -2854,10 +2859,11 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 100;
   flex-shrink: 0;
+  box-shadow: 4px 0 24px rgba(14, 165, 233, 0.04);
 }
 
 .kido-sidebar.collapsed {
-  width: 70px;
+  width: 76px;
 }
 
 .sidebar-header {
@@ -2865,8 +2871,8 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  height: 70px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  height: 72px;
 }
 
 .sidebar-logo {
@@ -2878,22 +2884,23 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
 }
 
 .sidebar-logo img {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
 }
 
 .sidebar-logo-text {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.15rem;
   color: var(--text);
+  letter-spacing: -0.01em;
 }
 
 .sidebar-toggle {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.35rem;
+  background: rgba(241, 245, 249, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 10px;
+  padding: 0.4rem;
   color: var(--text-soft);
   box-shadow: none;
   cursor: pointer;
@@ -2904,14 +2911,14 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
 }
 
 .sidebar-toggle:hover {
-  background: var(--bg-strong);
-  color: var(--text);
+  background: #e0f2fe;
+  color: var(--primary-dark);
   transform: none;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 1.5rem 0.75rem;
+  padding: 1.5rem 0.85rem;
   overflow-y: auto;
 }
 
@@ -2921,7 +2928,7 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .sidebar-nav-link {
@@ -2929,27 +2936,28 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
+  padding: 0.85rem 1.1rem;
+  border-radius: 16px;
   background: transparent;
   color: var(--text-soft);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
   box-shadow: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   border: none;
   text-align: left;
 }
 
 .sidebar-nav-link:hover {
-  background: var(--bg-strong);
-  color: var(--text);
-  transform: none;
+  background: #f0f9ff;
+  color: var(--primary-dark);
+  transform: translateX(3px);
 }
 
 .sidebar-nav-link.active {
-  background: var(--pastel-sky);
-  color: var(--primary-dark);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px -4px rgba(14, 165, 233, 0.45);
 }
 
 .sidebar-nav-link .nav-icon {
@@ -2961,9 +2969,9 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
 }
 
 .sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid var(--border);
-  background: #ffffff;
+  padding: 1.1rem 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .user-profile-summary {
@@ -3286,9 +3294,148 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Globally override bg-white to a warm baby pastel cream background */
-.bg-white {
-  background-color: var(--surface) !important;
+/* Glassmorphic card styling matching LoginForm's premium elevation */
+.kido-glass-card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 34px -6px rgba(14, 165, 233, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border-radius: 28px;
+  transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+}
+
+.kido-glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 48px -8px rgba(14, 165, 233, 0.14), 0 8px 18px rgba(0, 0, 0, 0.04);
+  border-color: rgba(14, 165, 233, 0.25);
+}
+
+/* Page Hero Banner System matching the LoginForm hero banner */
+.kido-page-hero {
+  background-color: var(--primary);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.16) 0%, transparent 60%),
+    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 55%),
+    linear-gradient(135deg, #0369a1 0%, #0284c7 40%, #0ea5e9 100%);
+  position: relative;
+  padding: 2.75rem 2.5rem 5.75rem;
+  color: white;
+  overflow: hidden;
+  border-radius: 32px;
+  margin-bottom: 2.25rem;
+  box-shadow: 0 20px 45px -10px rgba(2, 132, 199, 0.35);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.kido-page-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 15c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm3 24c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm18-18c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm9 33c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm36-12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm6 18c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-12 18c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm-36 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5zm-18 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm72-36c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm-9-27c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm-12 9c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-21 12c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm-27-9c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm60 69c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm9-18c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm12 9c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z' fill='%23ffffff' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.kido-page-hero .kido-cloud-container {
+  bottom: -1px;
+}
+
+.kido-page-hero .kido-cloud-container svg path {
+  fill: var(--bg);
+}
+
+.kido-page-hero-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.kido-page-hero-content {
+  flex: 1;
+  min-width: 280px;
+}
+
+.kido-page-hero-title {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.18;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.kido-page-hero-desc {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 620px;
+  margin-bottom: 1.5rem;
+}
+
+.kido-page-hero-media {
+  flex-shrink: 0;
+  width: 190px;
+  height: 190px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kido-page-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  box-shadow: 0 16px 36px rgba(3, 43, 60, 0.25);
+  border: 4px solid rgba(255, 255, 255, 0.85);
+}
+
+.kido-page-hero-chips {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.kido-hero-chip {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.45rem 1rem;
+  border-radius: 99px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.kido-hero-chip:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+}
+
+.kido-hero-chip.accent {
+  background: rgba(254, 79, 112, 0.35);
+  border-color: rgba(254, 79, 112, 0.5);
+}
+
+.kido-hero-chip.success {
+  background: rgba(16, 185, 129, 0.35);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 /* Health Timeline component styling */

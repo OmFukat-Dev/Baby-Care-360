@@ -115,19 +115,75 @@ const HealthRecordsPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="health-records-page">
-        <div className="back-link">
-          <button onClick={() => navigate(`/baby/${babyId}`)}>← Back to baby profile</button>
+      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      <section className="kido-page-hero">
+        <div className="kido-floating-shapes">
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
         </div>
-        <h1>Health Records & Timeline</h1>
+
+        <div className="kido-page-hero-inner">
+          <div className="kido-page-hero-content">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <button 
+                onClick={() => navigate(babyId ? `/baby/${babyId}` : '/')} 
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-xs font-bold transition-all cursor-pointer border border-white/30 shadow-sm"
+              >
+                <span>← Baby Profile</span>
+              </button>
+              <span className="kido-hero-badge">
+                🛡️ Health Records & Timeline
+              </span>
+            </div>
+
+            <h1 className="kido-page-hero-title">
+              Preventive Care & Health Timeline
+            </h1>
+
+            <p className="kido-page-hero-desc">
+              Explore your child's chronological health milestone events, scheduled medicine/vaccine alerts, and archived pediatric documents.
+            </p>
+
+            {/* Micro Stats Chips Row */}
+            <div className="kido-page-hero-chips">
+              <span className="kido-hero-chip">
+                📅 {timelineEvents.length} Timeline Events
+              </span>
+              <span className="kido-hero-chip">
+                ⏰ {reminders.filter((r) => r.status === 'pending').length} Pending Reminders
+              </span>
+              <span className="kido-hero-chip success">
+                📁 {documents.length} Health Documents
+              </span>
+            </div>
+          </div>
+
+          {/* Right Wobbly Frame Hero Visual */}
+          <div className="kido-page-hero-media wobbly-frame">
+            <img src="/baby-preventive.jpg" alt="Preventive health timeline" />
+          </div>
+        </div>
+
+        {/* Cloud Transition Divider at Bottom */}
+        <div className="kido-cloud-container">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,224L48,229.3C96,235,192,245,288,234.7C384,224,480,192,576,192C672,192,768,224,864,229.3C960,235,1056,213,1152,197.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+      </section>
+
+      <div className="health-records-page" style={{ margin: 0, padding: 0 }}>
         {error && <p className="error" role="alert">{error}</p>}
 
-        <div className="tabs">
+        <div className="tabs" style={{ marginBottom: '2rem' }}>
           <button
             className={`tab-button ${activeTab === 'timeline' ? 'active' : ''}`}
             onClick={() => setActiveTab('timeline')}
           >
-            Timeline
+            Timeline ({timelineEvents.length})
           </button>
           <button
             className={`tab-button ${activeTab === 'reminders' ? 'active' : ''}`}
@@ -144,61 +200,50 @@ const HealthRecordsPage: React.FC = () => {
         </div>
 
         {activeTab === 'timeline' && (
-          <section className="two-column-layout animate-fade-in">
-            <div>
-              <div className="page-illustration wobbly-frame" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-analytics.jpg" alt="Health analysis timeline" style={{ width: '100%', borderRadius: 'inherit' }} />
-              </div>
-              <h2>Health Timeline</h2>
-              <p className="subtext">Chronological log of child developmental records, vaccinations, measurements, and pediatrician visits.</p>
+          <div className="kido-glass-card p-6 animate-fade-in">
+            <div className="mb-6 border-b border-slate-100 pb-4">
+              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Comprehensive Health Timeline</h2>
+              <p className="text-xs text-slate-400 mt-1">Chronological record feed combining vaccine schedules, pediatric checkups, and growth logs.</p>
             </div>
-            <section className="form-panel">
-              <TimelineView events={timelineEvents} />
-            </section>
-          </section>
+            <TimelineView events={timelineEvents} />
+          </div>
         )}
 
         {activeTab === 'reminders' && (
-          <section className="two-column-layout">
-            <div>
-              <div className="page-illustration wobbly-frame" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-preventive.jpg" alt="Pediatric doctor vaccination reminder" style={{ width: '100%', borderRadius: 'inherit' }} />
-              </div>
-              <h2>Reminders</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Active Reminders</h2>
               <ReminderList
                 reminders={reminders}
                 onEdit={setEditingReminder}
                 onDelete={deleteReminder}
               />
             </div>
-            <section className="form-panel">
-              <h2>{editingReminder ? 'Edit Reminder' : 'Create Reminder'}</h2>
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>{editingReminder ? 'Edit Reminder' : 'Create Reminder'}</h2>
               <ReminderForm
                 record={editingReminder}
                 onSubmit={saveReminder}
                 onCancel={() => setEditingReminder(undefined)}
               />
-            </section>
-          </section>
+            </div>
+          </div>
         )}
 
         {activeTab === 'documents' && (
-          <section className="two-column-layout">
-            <div>
-              <div className="page-illustration wobbly-frame-alt" style={{ maxWidth: '300px', margin: '0 auto 1.5rem' }}>
-                <img src="/baby-preventive.jpg" alt="Medical health documents illustration" style={{ width: '100%', borderRadius: 'inherit' }} />
-              </div>
-              <h2>Health Documents</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Health Documents</h2>
               <DocumentList
                 documents={documents}
                 onDelete={deleteDocument}
               />
             </div>
-            <section className="form-panel">
-              <h2>Upload Document</h2>
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Upload Medical Document</h2>
               <DocumentUploadForm onSubmit={saveDocument} />
-            </section>
-          </section>
+            </div>
+          </div>
         )}
       </div>
     </Layout>

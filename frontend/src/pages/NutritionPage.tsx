@@ -239,72 +239,116 @@ const NutritionPage: React.FC = () => {
 
   return (
     <Layout>
-      {/* Back button */}
-      <div className="mb-6">
-        <button 
-          onClick={() => navigate('/')} 
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-800 font-bold text-sm bg-transparent border-none cursor-pointer"
-        >
-          <ChevronLeft size={16} />
-          <span>Back to Dashboard</span>
-        </button>
-      </div>
-
-      <header className="mb-8 flex justify-between items-start flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-            Nutrition & Feeding
-          </h1>
-          {baby && (
-            <p className="text-slate-500 font-medium mt-1">
-              🥗 {baby.name} &bull; <span className="font-semibold text-sky-600">{calculateAge(baby.date_of_birth)} old</span>
-            </p>
-          )}
+      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      <section className="kido-page-hero">
+        <div className="kido-floating-shapes">
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
         </div>
 
-        {/* Dynamic add button based on current tab */}
-        {activeTab === 'feeding' && (
-          <button
-            onClick={() => {
-              setEditingFeeding(undefined);
-              setShowFeedingForm(!showFeedingForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Log Feeding</span>
-          </button>
-        )}
-        {activeTab === 'foods' && (
-          <button
-            onClick={() => {
-              setEditingFood(undefined);
-              setShowFoodForm(!showFoodForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Introduce Solid Food</span>
-          </button>
-        )}
-        {activeTab === 'meals' && (
-          <button
-            onClick={() => {
-              setEditingMealPlan(undefined);
-              setShowMealForm(!showMealForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Create Meal Plan</span>
-          </button>
-        )}
-      </header>
+        <div className="kido-page-hero-inner">
+          <div className="kido-page-hero-content">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <button 
+                onClick={() => navigate('/')} 
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-xs font-bold transition-all cursor-pointer border border-white/30 shadow-sm"
+              >
+                <ChevronLeft size={14} />
+                <span>Dashboard</span>
+              </button>
+              <span className="kido-hero-badge">
+                🥗 Pediatric Nutrition & Feeds
+              </span>
+            </div>
+
+            <h1 className="kido-page-hero-title">
+              Nutrition & Complementary Feeding
+            </h1>
+
+            <p className="kido-page-hero-desc">
+              {baby 
+                ? `Track ${baby.name}'s daily milk feedings, solid food introductions, allergen responses, and weekly meal schedule.`
+                : "Manage infant feeding schedules, solid foods introduction, and weekly nutritional balance."}
+            </p>
+
+            {/* Micro Stats Chips Row */}
+            <div className="kido-page-hero-chips">
+              {baby && (
+                <>
+                  <span className="kido-hero-chip">
+                    👶 {baby.name}
+                  </span>
+                  <span className="kido-hero-chip">
+                    🎂 {calculateAge(baby.date_of_birth)}
+                  </span>
+                </>
+              )}
+              <span className="kido-hero-chip">
+                🍼 {feedingRecords.length} Feed Logs
+              </span>
+              <span className="kido-hero-chip">
+                🥑 {foodRecords.length} Foods Tracked
+              </span>
+              {activeTab === 'feeding' && (
+                <button
+                  onClick={() => {
+                    setEditingFeeding(undefined);
+                    setShowFeedingForm(!showFeedingForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showFeedingForm ? 'Close Form' : 'Log Feeding'}</span>
+                </button>
+              )}
+              {activeTab === 'foods' && (
+                <button
+                  onClick={() => {
+                    setEditingFood(undefined);
+                    setShowFoodForm(!showFoodForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showFoodForm ? 'Close Form' : 'Introduce Food'}</span>
+                </button>
+              )}
+              {activeTab === 'meals' && (
+                <button
+                  onClick={() => {
+                    setEditingMealPlan(undefined);
+                    setShowMealForm(!showMealForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showMealForm ? 'Close Form' : 'Plan Meal'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Right Wobbly Frame Hero Visual */}
+          <div className="kido-page-hero-media wobbly-frame">
+            <img src="/baby-nutrition-meals.jpg" alt="Baby healthy nutrition tracking" />
+          </div>
+        </div>
+
+        {/* Cloud Transition Divider at Bottom */}
+        <div className="kido-cloud-container">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,224L48,229.3C96,235,192,245,288,234.7C384,224,480,192,576,192C672,192,768,224,864,229.3C960,235,1056,213,1152,197.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+      </section>
 
       {error && <div className="error-banner mb-6">{error}</div>}
 
       {/* Tabs list */}
-      <div className="flex border-b border-slate-100 mb-8 gap-6">
+      <div className="flex border-b border-slate-200/80 mb-8 gap-6">
         {[
           { key: 'feeding', label: '🍼 Feeding Logs' },
           { key: 'foods', label: '🥗 Food Introduction' },
@@ -326,7 +370,7 @@ const NutritionPage: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             
             {/* Today's meals checklist section */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Today's Meals</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
@@ -356,7 +400,7 @@ const NutritionPage: React.FC = () => {
 
             {/* Feeding details form overlay */}
             {showFeedingForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingFeeding ? 'Edit Feeding Log Entry' : 'Log Feeding Entry'}</h3>
                 <FeedingForm
                   record={editingFeeding}
@@ -367,7 +411,7 @@ const NutritionPage: React.FC = () => {
             )}
 
             {/* Feeding records table log listing */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Feeding Log</h3>
               <FeedingLog
                 records={feedingRecords}
@@ -381,12 +425,12 @@ const NutritionPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Feeding Guidance</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Pediatric recommendations suggest offering breast milk or formula as the primary source of nutrition for babies up to 12 months.
             </p>
-            <div className="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 text-xs font-semibold text-sky-850 flex gap-3">
+            <div className="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 text-xs font-semibold text-sky-900 flex gap-3">
               <span className="text-xl">🍼</span>
               <div>
                 <span className="font-bold block mb-1">Consistency check</span>
@@ -403,7 +447,7 @@ const NutritionPage: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             
             {/* Search and filters bar */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm flex gap-4 items-center flex-wrap">
+            <div className="kido-glass-card p-4 flex gap-4 items-center flex-wrap">
               <div className="relative flex-grow max-w-md">
                 <Search size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                 <input
@@ -411,12 +455,12 @@ const NutritionPage: React.FC = () => {
                   placeholder="Search foods (e.g. Avocado, Carrot)..."
                   value={foodSearch}
                   onChange={(e) => setFoodSearch(e.target.value)}
-                  className="pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-100 rounded-full font-medium text-sm w-full mt-0 focus:bg-white"
+                  className="pl-11 pr-4 py-2.5 bg-slate-50/70 border border-slate-200/80 rounded-full font-medium text-sm w-full mt-0 focus:bg-white"
                 />
               </div>
 
               {/* Categorical select filter */}
-              <div className="flex border border-slate-100 rounded-full p-1 bg-slate-50/50">
+              <div className="flex border border-slate-200/80 rounded-full p-1 bg-slate-50">
                 {[
                   { key: 'all', label: 'All Foods' },
                   { key: 'no_reaction', label: 'Introduced' },
@@ -425,7 +469,7 @@ const NutritionPage: React.FC = () => {
                   <button
                     key={cat.key}
                     onClick={() => setSelectedFoodCategory(cat.key)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${selectedFoodCategory === cat.key ? 'bg-white text-sky-600 shadow-sm' : 'text-slate-500 hover:text-slate-800 bg-transparent'}`}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${selectedFoodCategory === cat.key ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 bg-transparent'}`}
                   >
                     {cat.label}
                   </button>
@@ -435,7 +479,7 @@ const NutritionPage: React.FC = () => {
 
             {/* Food Form overlay */}
             {showFoodForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingFood ? 'Edit Solid Food Log' : 'Introduce New Solid Food'}</h3>
                 <FoodIntroductionForm
                   record={editingFood}
@@ -450,10 +494,10 @@ const NutritionPage: React.FC = () => {
               {filteredFoods.map((food, idx) => {
                 const isAllergic = food.reaction?.toLowerCase() === 'allergic' || food.reaction?.toLowerCase() === 'allergy';
                 return (
-                  <div key={food.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:shadow-slate-100/50 transition-all flex justify-between items-start">
+                  <div key={food.id} className="kido-glass-card p-5 hover-scale transition-all flex justify-between items-start">
                     <div className="flex gap-4 items-start">
                       {/* Food category avatar icon placeholder based on name */}
-                      <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">
+                      <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 shadow-sm border border-amber-100">
                         {food.food_name.toLowerCase().includes('banana') ? '🍌' :
                          food.food_name.toLowerCase().includes('apple') ? '🍎' :
                          food.food_name.toLowerCase().includes('carrot') ? '🥕' :
@@ -473,7 +517,7 @@ const NutritionPage: React.FC = () => {
                         </p>
 
                         {food.notes && (
-                          <p className="text-xs text-slate-500 italic mt-2 border-t border-slate-50 pt-1">
+                          <p className="text-xs text-slate-500 italic mt-2 border-t border-slate-100 pt-1">
                             {food.notes}
                           </p>
                         )}
@@ -486,7 +530,8 @@ const NutritionPage: React.FC = () => {
                           setEditingFood(food);
                           setShowFoodForm(true);
                         }}
-                        className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer"
+                        className="p-1 hover:bg-sky-100 rounded text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer"
+                        title="Edit"
                       >
                         <Edit size={14} />
                       </button>
@@ -497,6 +542,7 @@ const NutritionPage: React.FC = () => {
                           }
                         }}
                         className="p-1 hover:bg-red-50 rounded text-slate-400 hover:text-red-600 transition-colors border-none bg-transparent cursor-pointer"
+                        title="Delete"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -506,7 +552,7 @@ const NutritionPage: React.FC = () => {
               })}
 
               {filteredFoods.length === 0 && (
-                <div className="col-span-2 text-center py-12 bg-white border border-slate-100 rounded-3xl">
+                <div className="col-span-2 text-center py-12 kido-glass-card">
                   <span className="text-4xl block mb-3">🥗</span>
                   <p className="text-sm font-semibold text-slate-600">No solid foods tracked</p>
                   <p className="text-xs text-slate-400 mt-1">Start introducing soft fruits, veggies, and grains</p>
@@ -516,7 +562,7 @@ const NutritionPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-3" style={{ fontFamily: 'Plus Jakarta Sans' }}>Food Introduction Rules</h3>
             <ul className="flex flex-col gap-3 text-xs text-slate-500 font-semibold pl-4 list-disc">
               <li>Introduce only one new single-ingredient food at a time.</li>
@@ -534,7 +580,7 @@ const NutritionPage: React.FC = () => {
             
             {/* Meal Form overlay */}
             {showMealForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingMealPlan ? 'Edit Weekly Meal Plan' : 'Create Weekly Meal Plan'}</h3>
                 <MealPlanner
                   mealPlan={editingMealPlan}
@@ -546,7 +592,7 @@ const NutritionPage: React.FC = () => {
 
             {/* Meal plans list */}
             {mealPlans.length === 0 ? (
-              <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl shadow-sm">
+              <div className="text-center py-16 kido-glass-card shadow-sm">
                 <div className="text-4xl mb-4">🍲</div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">No weekly meal plans set</h3>
                 <p className="text-slate-500 max-w-sm mx-auto mb-6 text-xs leading-relaxed">
@@ -554,7 +600,7 @@ const NutritionPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setShowMealForm(true)}
-                  className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all text-sm cursor-pointer"
+                  className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all text-sm cursor-pointer shadow-lg shadow-sky-500/25"
                 >
                   Create First Meal Plan
                 </button>
@@ -562,7 +608,7 @@ const NutritionPage: React.FC = () => {
             ) : (
               <div className="flex flex-col gap-4">
                 {mealPlans.map((plan) => (
-                  <div key={plan.id} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex justify-between items-start">
+                  <div key={plan.id} className="kido-glass-card p-6 flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <Award size={18} className="text-amber-500" />
@@ -604,12 +650,12 @@ const NutritionPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Weekly Nutrition</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Planning meals ahead ensures your baby gets a variety of grains, fruits, vegetables, and protein-rich items throughout the week.
             </p>
-            <div className="p-4 bg-amber-50/50 rounded-2xl border border-amber-100 text-xs font-semibold text-amber-900 flex gap-3">
+            <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-100 text-xs font-semibold text-amber-900 flex gap-3">
               <span className="text-xl">🍲</span>
               <div>
                 <span className="font-bold block mb-1">Pre-planning helper</span>

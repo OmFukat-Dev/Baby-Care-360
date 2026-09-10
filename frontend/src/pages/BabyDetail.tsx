@@ -138,34 +138,76 @@ const BabyDetail: React.FC = () => {
 
   return (
     <Layout>
-      {/* Back button */}
-      <div className="mb-6">
-        <button 
-          onClick={() => navigate('/')} 
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-800 font-bold text-sm bg-transparent border-none cursor-pointer"
-        >
-          <ChevronLeft size={16} />
-          <span>Back to Dashboard</span>
-        </button>
-      </div>
+      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      <section className="kido-page-hero">
+        <div className="kido-floating-shapes">
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+        </div>
+
+        <div className="kido-page-hero-inner">
+          <div className="kido-page-hero-content">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <button 
+                onClick={() => navigate('/')} 
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-xs font-bold transition-all cursor-pointer border border-white/30 shadow-sm"
+              >
+                <ChevronLeft size={14} />
+                <span>Dashboard</span>
+              </button>
+              <span className="kido-hero-badge">
+                🛡️ Preventive Care & Profile
+              </span>
+            </div>
+
+            <h1 className="kido-page-hero-title">
+              {baby.name}'s Child Care & Profile
+            </h1>
+
+            <p className="kido-page-hero-desc">
+              Born {new Date(baby.date_of_birth).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} ({calculateAge(baby.date_of_birth)} old). Monitor immunization milestone progress, pediatrician visits, and campaign logs.
+            </p>
+
+            {/* Micro Stats Chips Row */}
+            <div className="kido-page-hero-chips">
+              <span className="kido-hero-chip">
+                👶 {baby.gender ? baby.gender.toUpperCase() : 'Child'}
+              </span>
+              {baby.blood_group && (
+                <span className="kido-hero-chip">
+                  🩸 Blood: {baby.blood_group.toUpperCase()}
+                </span>
+              )}
+              <span className="kido-hero-chip success">
+                💉 {vaccineProgress.completed} of {vaccineProgress.total} Doses Done
+              </span>
+              <span className="kido-hero-chip">
+                🩺 {checkups.length} Visits Logged
+              </span>
+            </div>
+          </div>
+
+          {/* Right Wobbly Frame Hero Visual */}
+          <div className="kido-page-hero-media wobbly-frame">
+            <img src="/baby-preventive.jpg" alt="Baby preventive care and checkups" />
+          </div>
+        </div>
+
+        {/* Cloud Transition Divider at Bottom */}
+        <div className="kido-cloud-container">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,224L48,229.3C96,235,192,245,288,234.7C384,224,480,192,576,192C672,192,768,224,864,229.3C960,235,1056,213,1152,197.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+      </section>
 
       {error && <div className="error-banner mb-6" role="alert">{error}</div>}
 
-      {/* Profile Header Summary */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6 mb-8 flex-wrap md:flex-nowrap hover-scale animate-fade-in">
-        <div className="w-20 h-20 bg-sky-50 rounded-full flex items-center justify-center text-3xl border-2 border-sky-100">
-          👶
-        </div>
-        <div className="flex-grow">
-          <h1 className="text-3xl font-extrabold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>{baby.name}</h1>
-          <p className="text-slate-500 font-semibold mt-1">
-            {calculateAge(baby.date_of_birth)} old &bull; Born {new Date(baby.date_of_birth).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
-        </div>
-      </div>
-
       {/* Tabs Menu */}
-      <div className="flex border-b border-slate-100 mb-8 gap-6 flex-wrap">
+      <div className="flex border-b border-slate-200/80 mb-8 gap-6 flex-wrap">
         {[
           { key: 'profile', label: '👤 Profile & Bio' },
           { key: 'vaccines', label: '💉 Vaccine Timeline' },
@@ -186,23 +228,23 @@ const BabyDetail: React.FC = () => {
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* General Bio Details */}
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+          <div className="kido-glass-card p-6">
             <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Biological Profile</h3>
             
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between py-2 border-b border-slate-50">
+              <div className="flex justify-between py-2 border-b border-slate-100">
                 <span className="text-slate-400 font-semibold">Gender</span>
                 <span className="text-slate-800 font-bold capitalize">{baby.gender || '—'}</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-slate-50">
+              <div className="flex justify-between py-2 border-b border-slate-100">
                 <span className="text-slate-400 font-semibold">Blood Group</span>
                 <span className="text-slate-800 font-bold uppercase">{baby.blood_group || '—'}</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-slate-50">
+              <div className="flex justify-between py-2 border-b border-slate-100">
                 <span className="text-slate-400 font-semibold">Birth Weight</span>
                 <span className="text-slate-800 font-bold">{baby.birth_weight ? `${baby.birth_weight} kg` : '—'}</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-slate-50">
+              <div className="flex justify-between py-2 border-b border-slate-100">
                 <span className="text-slate-400 font-semibold">Birth Length</span>
                 <span className="text-slate-800 font-bold">{baby.birth_length ? `${baby.birth_length} cm` : '—'}</span>
               </div>
@@ -212,19 +254,19 @@ const BabyDetail: React.FC = () => {
           {/* Pediatric & Emergency details */}
           <div className="flex flex-col gap-6">
             {/* Health indicators / allergies */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <div className="flex items-center gap-2 mb-4 text-rose-600">
                 <ShieldAlert size={20} />
                 <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Allergies & Alerts</h3>
               </div>
               
-              <div className="bg-rose-50/50 p-4 border border-rose-100 rounded-2xl text-xs font-semibold text-rose-900">
+              <div className="bg-rose-50/70 p-4 border border-rose-100 rounded-2xl text-xs font-semibold text-rose-900">
                 ⚠️ No severe allergies reported. Always consult your clinic before introducing common food allergens like peanuts, soy, or dairy.
               </div>
             </div>
 
             {/* Emergency pediatrician contacts */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <div className="flex items-center gap-2 mb-4 text-emerald-600">
                 <Phone size={18} />
                 <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Pediatrician Contact</h3>
@@ -251,19 +293,19 @@ const BabyDetail: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             
             {/* Progress indicator card */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-sm text-slate-500 font-bold">Vaccination Journey Progress</span>
                 <span className="text-sm font-extrabold text-sky-600">{vaccineProgress.completed} of {vaccineProgress.total} Doses</span>
               </div>
               <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-2">
-                <div className="h-full bg-sky-500 transition-all duration-500" style={{ width: `${vaccineProgress.pct}%` }}></div>
+                <div className="h-full bg-sky-500 transition-all duration-500 rounded-full" style={{ width: `${vaccineProgress.pct}%` }}></div>
               </div>
               <span className="text-xs text-slate-400 font-medium">{vaccineProgress.pct}% completed</span>
             </div>
 
             {/* Vertical timeline progress track */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-6" style={{ fontFamily: 'Plus Jakarta Sans' }}>Immunization Schedule</h3>
 
               {vaccinations.length === 0 ? (
@@ -282,7 +324,7 @@ const BabyDetail: React.FC = () => {
                         </div>
 
                         {/* Timeline item card details */}
-                        <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/20 flex justify-between items-center flex-wrap gap-3">
+                        <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 flex justify-between items-center flex-wrap gap-3 hover:bg-sky-50/40 transition-colors">
                           <div>
                             <h4 className="font-bold text-slate-800 text-sm">{v.vaccine_name}</h4>
                             <p className="text-xs text-slate-400 font-semibold mt-1">Dose Number: {v.dose_number || '1'}</p>
@@ -310,12 +352,12 @@ const BabyDetail: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Vaccine Information</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Regular immunization schedules safeguard babies against dangerous preventable health hazards.
             </p>
-            <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-xs font-semibold text-emerald-900 flex gap-3">
+            <div className="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-100 text-xs font-semibold text-emerald-900 flex gap-3">
               <span className="text-xl">💉</span>
               <div>
                 <span className="font-bold block mb-1">Immunization advice</span>
@@ -336,13 +378,13 @@ const BabyDetail: React.FC = () => {
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Upcoming Visits</h3>
               
               {groupedCheckups.upcoming.length === 0 ? (
-                <div className="p-6 bg-slate-50/30 border border-slate-100 rounded-3xl text-center">
+                <div className="p-6 kido-glass-card text-center">
                   <p className="text-sm font-semibold text-slate-600">No upcoming pediatric appointments</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {groupedCheckups.upcoming.map((c) => (
-                    <div key={c.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                    <div key={c.id} className="kido-glass-card p-5 hover-scale">
                       <div className="flex justify-between items-start mb-3">
                         <span className="px-2.5 py-0.5 bg-sky-50 text-sky-600 rounded-full text-xxs font-bold uppercase tracking-wider">
                           {c.reason || 'Checkup'}
@@ -353,7 +395,7 @@ const BabyDetail: React.FC = () => {
                       <h4 className="font-bold text-slate-800 text-sm mb-1">{c.doctor_name || 'Dr. Pediatrician'}</h4>
                       {c.clinic && <p className="text-xs text-slate-400 font-semibold">{c.clinic}</p>}
                       
-                      <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold">
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-bold">
                         <span>📅 {new Date(c.appointment_date).toLocaleDateString()}</span>
                         {c.follow_up_date && <span>Follow-up: {new Date(c.follow_up_date).toLocaleDateString()}</span>}
                       </div>
@@ -368,13 +410,13 @@ const BabyDetail: React.FC = () => {
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Past Appointment History</h3>
               
               {groupedCheckups.past.length === 0 ? (
-                <div className="p-6 bg-slate-50/30 border border-slate-100 rounded-3xl text-center">
+                <div className="p-6 kido-glass-card text-center">
                   <p className="text-sm font-semibold text-slate-600">No past checkup history</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {groupedCheckups.past.map((c) => (
-                    <div key={c.id} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex justify-between items-center">
+                    <div key={c.id} className="kido-glass-card p-4 flex justify-between items-center">
                       <div>
                         <h4 className="font-bold text-slate-800 text-sm">{c.reason || 'Routine Checkup'}</h4>
                         <p className="text-xs text-slate-400 font-semibold mt-1">
@@ -392,7 +434,7 @@ const BabyDetail: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Visit Reminders</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Keeping record timelines of pediatric assessments helps diagnose growth trends early.
@@ -406,7 +448,7 @@ const BabyDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
             
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Polio Campaign Log</h3>
 
               {polioRecords.length === 0 ? (
@@ -417,7 +459,7 @@ const BabyDetail: React.FC = () => {
               ) : (
                 <div className="flex flex-col gap-3">
                   {polioRecords.map((p) => (
-                    <div key={p.id} className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center">
+                    <div key={p.id} className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center bg-slate-50/50 hover:bg-sky-50/40 transition-colors">
                       <div>
                         <h4 className="font-bold text-slate-800 text-sm">Polio Oral Dose</h4>
                         <p className="text-xs text-slate-400 font-semibold mt-1">
@@ -435,7 +477,7 @@ const BabyDetail: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Polio Campaign Guidelines</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Polio drops campaigns are scheduled periodically by public health bodies. Keep these tracked to protect your child.

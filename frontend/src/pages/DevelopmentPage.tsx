@@ -226,72 +226,117 @@ const DevelopmentPage: React.FC = () => {
 
   return (
     <Layout>
-      {/* Back button */}
-      <div className="mb-6">
-        <button 
-          onClick={() => navigate('/')} 
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-800 font-bold text-sm bg-transparent border-none cursor-pointer"
-        >
-          <ChevronLeft size={16} />
-          <span>Back to Dashboard</span>
-        </button>
-      </div>
-
-      <header className="mb-8 flex justify-between items-start flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-            Development & Daily Care
-          </h1>
-          {baby && (
-            <p className="text-slate-500 font-medium mt-1">
-              🧸 {baby.name} &bull; <span className="font-semibold text-sky-600">{calculateAge(baby.date_of_birth)} old</span>
-            </p>
-          )}
+      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      <section className="kido-page-hero">
+        <div className="kido-floating-shapes">
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
         </div>
 
-        {/* Dynamic add button based on current tab */}
-        {activeTab === 'milestones' && (
-          <button
-            onClick={() => {
-              setEditingMilestone(undefined);
-              setShowMilestoneForm(!showMilestoneForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Record Milestone</span>
-          </button>
-        )}
-        {activeTab === 'sleep' && (
-          <button
-            onClick={() => {
-              setEditingSleep(undefined);
-              setShowSleepForm(!showSleepForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Log Sleep Session</span>
-          </button>
-        )}
-        {activeTab === 'medicines' && (
-          <button
-            onClick={() => {
-              setEditingMedicine(undefined);
-              setShowMedicineForm(!showMedicineForm);
-            }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-all cursor-pointer text-sm"
-          >
-            <Plus size={16} />
-            <span>Record Medicine Dose</span>
-          </button>
-        )}
-      </header>
+        <div className="kido-page-hero-inner">
+          <div className="kido-page-hero-content">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <button 
+                onClick={() => navigate('/')} 
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-xs font-bold transition-all cursor-pointer border border-white/30 shadow-sm"
+              >
+                <ChevronLeft size={14} />
+                <span>Dashboard</span>
+              </button>
+              <span className="kido-hero-badge">
+                🧠 Cognitive, Sleep & Care
+              </span>
+            </div>
+
+            <h1 className="kido-page-hero-title">
+              Development & Daily Routines
+            </h1>
+
+            <p className="kido-page-hero-desc">
+              {baby 
+                ? `Monitor developmental milestones, nap cycles, and prescription dosages for ${baby.name}.`
+                : "Track cognitive and motor milestones, sleep duration, and pediatric prescriptions."}
+            </p>
+
+            {/* Micro Stats Chips Row */}
+            <div className="kido-page-hero-chips">
+              {baby && (
+                <>
+                  <span className="kido-hero-chip">
+                    👶 {baby.name}
+                  </span>
+                  <span className="kido-hero-chip">
+                    🎂 {calculateAge(baby.date_of_birth)}
+                  </span>
+                </>
+              )}
+              <span className="kido-hero-chip success">
+                🧸 {milestones.length} Milestones Logged
+              </span>
+              <span className="kido-hero-chip">
+                💤 {totalSleepTracked} Sleep Tracked
+              </span>
+
+              {activeTab === 'milestones' && (
+                <button
+                  onClick={() => {
+                    setEditingMilestone(undefined);
+                    setShowMilestoneForm(!showMilestoneForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showMilestoneForm ? 'Close Form' : 'Log Milestone'}</span>
+                </button>
+              )}
+              {activeTab === 'sleep' && (
+                <button
+                  onClick={() => {
+                    setEditingSleep(undefined);
+                    setShowSleepForm(!showSleepForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showSleepForm ? 'Close Form' : 'Log Sleep'}</span>
+                </button>
+              )}
+              {activeTab === 'medicines' && (
+                <button
+                  onClick={() => {
+                    setEditingMedicine(undefined);
+                    setShowMedicineForm(!showMedicineForm);
+                  }}
+                  className="kido-hero-chip accent cursor-pointer hover-scale border-none"
+                >
+                  <Plus size={14} />
+                  <span>{showMedicineForm ? 'Close Form' : 'Record Medicine'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Right Wobbly Frame Hero Visual */}
+          <div className="kido-page-hero-media wobbly-frame">
+            <img src="/baby-development.jpg" alt="Baby developmental milestones" />
+          </div>
+        </div>
+
+        {/* Cloud Transition Divider at Bottom */}
+        <div className="kido-cloud-container">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,224L48,229.3C96,235,192,245,288,234.7C384,224,480,192,576,192C672,192,768,224,864,229.3C960,235,1056,213,1152,197.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+      </section>
 
       {error && <div className="error-banner mb-6">{error}</div>}
 
       {/* Tabs list */}
-      <div className="flex border-b border-slate-100 mb-8 gap-6">
+      <div className="flex border-b border-slate-200/80 mb-8 gap-6">
         {[
           { key: 'milestones', label: '🧸 Milestones' },
           { key: 'sleep', label: '💤 Sleep Log' },
@@ -314,7 +359,7 @@ const DevelopmentPage: React.FC = () => {
             
             {/* Form overlay */}
             {showMilestoneForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingMilestone ? 'Edit Milestone Record' : 'Log Milestone Achievement'}</h3>
                 <MilestoneForm
                   milestone={editingMilestone}
@@ -325,7 +370,7 @@ const DevelopmentPage: React.FC = () => {
             )}
 
             {/* Categorized Milestones listings */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Development Checklist</h3>
               
               <div className="flex flex-col gap-6">
@@ -368,12 +413,12 @@ const DevelopmentPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-3" style={{ fontFamily: 'Plus Jakarta Sans' }}>Developmental Advice</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               General milestone guidelines are derived from standard rules-based guidelines. They help monitor basic patterns.
             </p>
-            <div className="p-4 bg-violet-50/50 rounded-2xl border border-violet-100 text-xs font-semibold text-violet-900 flex gap-3">
+            <div className="p-4 bg-violet-50/70 rounded-2xl border border-violet-100 text-xs font-semibold text-violet-900 flex gap-3">
               <span className="text-xl">🩺</span>
               <div>
                 <span className="font-bold block mb-1">Pediatric reminder</span>
@@ -390,8 +435,8 @@ const DevelopmentPage: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             
             {/* Summary card */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-6">
-              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+            <div className="kido-glass-card p-6 flex items-center gap-6">
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-indigo-100">
                 <Moon size={22} />
               </div>
               <div>
@@ -402,7 +447,7 @@ const DevelopmentPage: React.FC = () => {
 
             {/* Sleep Form overlay */}
             {showSleepForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingSleep ? 'Edit Sleep Record entry' : 'Log Sleep Session entry'}</h3>
                 <SleepForm
                   record={editingSleep}
@@ -413,7 +458,7 @@ const DevelopmentPage: React.FC = () => {
             )}
 
             {/* Sleep logs list */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Recent Sleep Logs</h3>
               <SleepLog
                 records={sleepRecords}
@@ -427,7 +472,7 @@ const DevelopmentPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Sleep Guidance</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium mb-4">
               Consistently logging sleeping schedules allows parents to understand sleep trends, helping optimize naps.
@@ -443,7 +488,7 @@ const DevelopmentPage: React.FC = () => {
             
             {/* Medicine Form overlay */}
             {showMedicineForm && (
-              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <div className="kido-glass-card p-6">
                 <h3 className="text-base font-bold text-slate-800 mb-4">{editingMedicine ? 'Edit Medicine Schedule' : 'Record Medicine Dose'}</h3>
                 <MedicineForm
                   record={editingMedicine}
@@ -454,7 +499,7 @@ const DevelopmentPage: React.FC = () => {
             )}
 
             {/* Medicines log list */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+            <div className="kido-glass-card p-6">
               <h3 className="text-lg font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Medicines Schedule</h3>
               
               {medicines.length === 0 ? (
@@ -477,9 +522,9 @@ const DevelopmentPage: React.FC = () => {
 
           </div>
 
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm h-fit">
+          <div className="kido-glass-card p-6 h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>Safety Reminder</h3>
-            <div className="p-4 bg-rose-50/50 rounded-2xl border border-rose-100 text-xs font-semibold text-rose-900 flex gap-3">
+            <div className="p-4 bg-rose-50/70 rounded-2xl border border-rose-100 text-xs font-semibold text-rose-900 flex gap-3">
               <span className="text-xl">⚠️</span>
               <div>
                 <span className="font-bold block mb-1">Consult Pediatrician</span>

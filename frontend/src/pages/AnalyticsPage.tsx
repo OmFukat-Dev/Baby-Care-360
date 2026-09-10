@@ -82,22 +82,70 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="analytics-page">
-        <div className="back-link">
-          <button onClick={() => navigate(`/baby/${babyId}`)}>← Back to baby profile</button>
+      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      <section className="kido-page-hero">
+        <div className="kido-floating-shapes">
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
+          <div className="kido-shape"></div>
         </div>
-        <div>
-          <div>
-            <h1>Analytics & Reports</h1>
-            <p>Track health statistics, growth history, and export PDF summaries.</p>
+
+        <div className="kido-page-hero-inner">
+          <div className="kido-page-hero-content">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <button 
+                onClick={() => navigate(babyId ? `/baby/${babyId}` : '/')} 
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-xs font-bold transition-all cursor-pointer border border-white/30 shadow-sm"
+              >
+                <span>← Baby Profile</span>
+              </button>
+              <span className="kido-hero-badge">
+                📊 Insights & Clinic Documents
+              </span>
+            </div>
+
+            <h1 className="kido-page-hero-title">
+              Analytics & Medical Reports
+            </h1>
+
+            <p className="kido-page-hero-desc">
+              Track health metrics velocity, review developmental progress against WHO standards, and generate printable PDF clinical summaries for your pediatrician.
+            </p>
+
+            {/* Micro Stats Chips Row */}
+            <div className="kido-page-hero-chips">
+              <span className="kido-hero-chip">
+                📈 Comprehensive Metrics
+              </span>
+              <span className="kido-hero-chip">
+                💉 Immunization Curves
+              </span>
+              <span className="kido-hero-chip success">
+                📄 {reports.length} Reports Archived
+              </span>
+            </div>
           </div>
-          <div className="page-illustration wobbly-frame">
-            <img src="/baby-analytics.jpg" alt="Analytics illustration" />
+
+          {/* Right Wobbly Frame Hero Visual */}
+          <div className="kido-page-hero-media wobbly-frame">
+            <img src="/baby-analytics.jpg" alt="Baby clinical analytics and reports" />
           </div>
         </div>
+
+        {/* Cloud Transition Divider at Bottom */}
+        <div className="kido-cloud-container">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,224L48,229.3C96,235,192,245,288,234.7C384,224,480,192,576,192C672,192,768,224,864,229.3C960,235,1056,213,1152,197.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+      </section>
+
+      <div className="analytics-page" style={{ margin: 0, padding: 0 }}>
         {error && <p className="error" role="alert">{error}</p>}
 
-        <div className="tabs">
+        <div className="tabs" style={{ marginBottom: '2rem' }}>
           <button
             className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
@@ -119,17 +167,17 @@ const AnalyticsPage: React.FC = () => {
         </div>
 
         {activeTab === 'overview' && metrics && (
-          <section>
+          <section className="kido-glass-card p-6">
             <MetricsCard metrics={metrics} />
           </section>
         )}
 
         {activeTab === 'growth' && stats && (
-          <section>
-            <div className="analytics-controls">
-              <label>
+          <section className="kido-glass-card p-6">
+            <div className="analytics-controls mb-6">
+              <label className="font-bold text-sm text-slate-700">
                 Time Period:
-                <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
+                <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="mt-1">
                   <option value={30}>Last 30 days</option>
                   <option value={60}>Last 60 days</option>
                   <option value={90}>Last 90 days</option>
@@ -138,25 +186,27 @@ const AnalyticsPage: React.FC = () => {
               </label>
             </div>
 
-            <GrowthChart stats={stats} />
-            <VaccinationProgress stats={stats} />
+            <div className="flex flex-col gap-6">
+              <GrowthChart stats={stats} />
+              <VaccinationProgress stats={stats} />
+            </div>
           </section>
         )}
 
         {activeTab === 'reports' && (
-          <section className="two-column-layout">
-            <div>
-              <h2>Generated Reports</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Generated Reports</h2>
               <ReportsList
                 reports={reports}
                 onDelete={deleteReport}
               />
             </div>
-            <section className="form-panel">
-              <h2>Generate New Report</h2>
+            <div className="kido-glass-card p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>Generate New Report</h2>
               <ReportGenerator onSubmit={generateReport} />
-            </section>
-          </section>
+            </div>
+          </div>
         )}
       </div>
     </Layout>
