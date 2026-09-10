@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Navigation from './Navigation';
 import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
+import QuickActionFAB from '../common/QuickActionFAB';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -56,6 +57,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           
           <BottomNav currentBabyId={activeBabyId} />
         </div>
+
+        <QuickActionFAB currentBabyId={activeBabyId} />
 
         {showScrollTop && (
           <button className="kido-scroll-top" onClick={scrollToTop} aria-label="Scroll to top">

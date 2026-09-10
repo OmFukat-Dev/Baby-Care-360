@@ -10,9 +10,14 @@ import {
   Edit, 
   Trash2, 
   CheckCircle, 
-  Clock, 
   PlusCircle,
-  ChevronDown
+  ChevronDown,
+  Sparkles,
+  Scale,
+  Ruler,
+  Brain,
+  ShieldCheck,
+  ArrowUpRight
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -35,14 +40,26 @@ const Dashboard: React.FC = () => {
   // Today checklist items state
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
+  // Baby mood state (persisted in localStorage per baby)
+  const [babyMood, setBabyMood] = useState<string>('happy');
+  const [showMoodPicker, setShowMoodPicker] = useState<boolean>(false);
+
+  const moods: { [key: string]: { label: string; emoji: string } } = {
+    happy: { label: 'Happy & Active', emoji: '😊' },
+    content: { label: 'Full & Content', emoji: '🍼' },
+    sleepy: { label: 'Sleeping Sweetly', emoji: '😴' },
+    playful: { label: 'Curious & Playful', emoji: '🧸' },
+    fussy: { label: 'Needs Extra Hugs', emoji: '🩺' }
+  };
+
   const selectedBaby = babies[selectedBabyIndex];
 
-  // Load greeting based on current local time
-  const greeting = useMemo(() => {
+  // Load greeting with icon based on current local time
+  const { greeting, greetingIcon } = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return { greeting: 'Good morning', greetingIcon: '☀️' };
+    if (hour < 17) return { greeting: 'Good afternoon', greetingIcon: '🌤️' };
+    return { greeting: 'Good evening', greetingIcon: '🌙' };
   }, []);
 
   useEffect(() => {
@@ -52,6 +69,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     if (selectedBaby) {
       loadBabyDashboardData(selectedBaby.id);
+      const savedMood = localStorage.getItem(`baby_mood_${selectedBaby.id}`);
+      if (savedMood && moods[savedMood]) {
+        setBabyMood(savedMood);
+      } else {
+        setBabyMood('happy');
+      }
     }
   }, [selectedBaby]);
 
@@ -184,6 +207,14 @@ const Dashboard: React.FC = () => {
     localStorage.setItem(key, newVal ? 'true' : 'false');
   };
 
+  // Count checked daily items
+  const checkedCount = useMemo(() => {
+    if (!selectedBaby) return 0;
+    const todayStr = new Date().toISOString().split('T')[0];
+    return ['breakfast', 'lunch', 'snack', 'dinner', 'nap', 'medicine']
+      .filter(item => checkedItems[`${todayStr}-${selectedBaby.id}-${item}`]).length;
+  }, [selectedBaby, checkedItems]);
+
   // Compute stats for active baby
   const stats = useMemo(() => {
     if (!selectedBaby) return { weight: '--', height: '--', vaccines: '0/0', completedPct: 0 };
@@ -278,7 +309,7 @@ const Dashboard: React.FC = () => {
     <Layout>
       {error && <div className="error-banner mb-6" role="alert">{error}</div>}
 
-      {/* Hero Banner Section with Floating Shapes & Cloud Transition */}
+      {/* Hero Banner Section with Floating Shapes, Twinkles & Cloud Transition */}
       <section className="kido-page-hero">
         <div className="kido-floating-shapes">
           <div className="kido-shape"></div>
@@ -288,12 +319,24 @@ const Dashboard: React.FC = () => {
           <div className="kido-shape"></div>
         </div>
 
+        {/* Floating Twinkles & Delight Accents */}
+        <div className="kido-hero-twinkle kido-hero-twinkle-1">✨</div>
+        <div className="kido-hero-twinkle kido-hero-twinkle-2">🎈</div>
+        <div className="kido-hero-twinkle kido-hero-twinkle-3">✨</div>
+
         <div className="kido-page-hero-inner">
           <div className="kido-page-hero-content">
             <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
-              <span className="kido-hero-badge">
-                ✨ Smart Pediatric Care Dashboard
-              </span>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="kido-time-greeting">
+                  <span>{greetingIcon}</span>
+                  <span>{greeting}</span>
+                </span>
+                <span className="kido-hero-badge">
+                  <Sparkles size={13} className="text-amber-300" />
+                  <span>Smart Pediatric Care 360</span>
+                </span>
+              </div>
 
               {/* Baby Profile Switcher Dropdown */}
               {babies.length > 0 && (
@@ -347,13 +390,44 @@ const Dashboard: React.FC = () => {
 
             <p className="kido-page-hero-desc">
               {selectedBaby 
-                ? `Monitor physical milestones, feeding intake, vaccinations, and pediatric routines for ${selectedBaby.name} in one place.`
+                ? `Monitor physical milestones, feeding intake, vaccinations, and pediatric routines for ${selectedBaby.name} in one comforting place.`
                 : "Welcome to BabyCare360. Create your child's profile below to unlock customized developmental milestones and healthcare trackers."}
             </p>
 
-            {/* Micro Stats Chips Row */}
+            {/* Micro Stats Chips Row + Interactive Mood Capsule */}
             {selectedBaby && (
               <div className="kido-page-hero-chips">
+                {/* Baby Mood Capsule */}
+                <div className="kido-mood-capsule">
+                  <button 
+                    className="kido-mood-badge" 
+                    onClick={() => setShowMoodPicker(!showMoodPicker)}
+                    title="Tap to update baby's current mood"
+                  >
+                    <span>{moods[babyMood]?.emoji || '😊'}</span>
+                    <span>{moods[babyMood]?.label || 'Happy & Active'}</span>
+                    <ChevronDown size={13} className="text-slate-400" />
+                  </button>
+                  {showMoodPicker && (
+                    <div className="kido-mood-dropdown">
+                      {Object.entries(moods).map(([key, val]) => (
+                        <button
+                          key={key}
+                          className={`kido-mood-option ${babyMood === key ? 'active' : ''}`}
+                          onClick={() => {
+                            setBabyMood(key);
+                            setShowMoodPicker(false);
+                            localStorage.setItem(`baby_mood_${selectedBaby.id}`, key);
+                          }}
+                        >
+                          <span>{val.emoji}</span>
+                          <span>{val.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <span className="kido-hero-chip">
                   🎂 {calculateAge(selectedBaby.date_of_birth)}
                 </span>
@@ -407,57 +481,142 @@ const Dashboard: React.FC = () => {
           {/* Left Columns (Larger: Profile, Today, Growth, Suggestions) */}
           <div className="lg:col-span-2 flex flex-col gap-8">
             
-            {/* Baby Overview Profile Card */}
-            <div className="kido-glass-card p-6 flex items-center gap-6 flex-wrap md:flex-nowrap">
-              {/* Photo frame */}
-              <div className="kido-avatar-circle flex-shrink-0 w-24 h-24 bg-sky-50 text-slate-700 flex items-center justify-center text-4xl border-2 border-sky-200 relative shadow-sm">
-                👶
-                <div 
-                  className="absolute -bottom-1 -right-1 bg-sky-500 text-white p-1.5 rounded-full border-2 border-white cursor-pointer hover:bg-sky-600 transition-colors shadow-sm" 
-                  onClick={() => { setEditingBaby(selectedBaby); setShowProfileForm(true); }}
-                  title="Edit baby profile"
-                >
-                  <Edit size={13} />
-                </div>
-              </div>
+            {/* Baby Overview Profile Card with Pastel Stat Pods */}
+            <div className="kido-glass-card p-6">
+              {/* Header with Avatar & Details */}
+              <div className="flex items-center justify-between gap-4 flex-wrap pb-5 border-b border-slate-100">
+                <div className="flex items-center gap-4">
+                  {/* Photo frame with edit badge */}
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-400 to-cyan-500 text-white flex items-center justify-center text-3xl shadow-md border-2 border-white">
+                      👶
+                    </div>
+                    <button 
+                      className="absolute -bottom-1 -right-1 bg-white text-slate-700 p-1.5 rounded-full border border-slate-200 cursor-pointer hover:bg-sky-50 transition-colors shadow-sm" 
+                      onClick={() => { setEditingBaby(selectedBaby); setShowProfileForm(true); }}
+                      title="Edit baby profile"
+                    >
+                      <Edit size={12} className="text-sky-600" />
+                    </button>
+                  </div>
 
-              {/* Bio & Parameters */}
-              <div className="flex-grow">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>{selectedBaby.name}</h3>
-                  <span className="inline-block px-3 py-1 bg-sky-50 border border-sky-100 rounded-full text-xs font-bold text-sky-700">
-                    {calculateAge(selectedBaby.date_of_birth)}
-                  </span>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>{selectedBaby.name}</h3>
+                      <span className="inline-flex items-center gap-1 px-3 py-0.5 bg-sky-50 border border-sky-100 rounded-full text-xs font-bold text-sky-700">
+                        🎂 {calculateAge(selectedBaby.date_of_birth)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Born on {new Date(selectedBaby.date_of_birth).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} • {selectedBaby.gender === 'female' ? 'Girl 👧' : 'Boy 👦'}
+                    </p>
+                  </div>
                 </div>
-                
-                {/* Micro parameters grid */}
-                <div className="grid grid-cols-3 gap-4 mt-5 pt-4 border-t border-slate-100">
-                  <div>
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Weight</span>
-                    <span className="text-xl font-extrabold text-slate-800">{stats.weight} <span className="text-sm font-semibold text-slate-400">kg</span></span>
+
+                <button 
+                  onClick={() => navigate(`/baby/${selectedBaby.id}`)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl text-xs font-bold transition-all cursor-pointer border border-sky-200"
+                >
+                  <span>Full Profile</span>
+                  <ArrowUpRight size={14} />
+                </button>
+              </div>
+              
+              {/* Micro-Metric Pastel Stat Pods Grid */}
+              <div className="kido-stat-pods-grid">
+                {/* Weight Pod */}
+                <div className="kido-stat-pod kido-stat-pod-sky">
+                  <div className="pod-header-row">
+                    <div className="pod-icon-pod">
+                      <Scale size={20} />
+                    </div>
+                    <span className="pod-percentile-pill">
+                      ● 50th %ile
+                    </span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Height</span>
-                    <span className="text-xl font-extrabold text-slate-800">{stats.height} <span className="text-sm font-semibold text-slate-400">cm</span></span>
+                    <div className="pod-label">Weight</div>
+                    <div className="pod-value">{stats.weight} <span className="text-sm font-bold text-slate-500">kg</span></div>
+                    <div className="pod-subtext">Normal Weight</div>
+                  </div>
+                </div>
+
+                {/* Height Pod */}
+                <div className="kido-stat-pod kido-stat-pod-mint">
+                  <div className="pod-header-row">
+                    <div className="pod-icon-pod">
+                      <Ruler size={20} />
+                    </div>
+                    <span className="pod-percentile-pill">
+                      ● Optimal
+                    </span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Immunization</span>
-                    <span className="text-xl font-extrabold text-slate-800">{stats.vaccines} <span className="text-sm font-semibold text-slate-400">doses</span></span>
+                    <div className="pod-label">Height / Length</div>
+                    <div className="pod-value">{stats.height} <span className="text-sm font-bold text-slate-500">cm</span></div>
+                    <div className="pod-subtext">Steady Growth</div>
+                  </div>
+                </div>
+
+                {/* Head Circ Pod */}
+                <div className="kido-stat-pod kido-stat-pod-rose">
+                  <div className="pod-header-row">
+                    <div className="pod-icon-pod">
+                      <Brain size={20} />
+                    </div>
+                    <span className="pod-percentile-pill">
+                      ● Healthy
+                    </span>
+                  </div>
+                  <div>
+                    <div className="pod-label">Head Circ.</div>
+                    <div className="pod-value">{measurements[0]?.head_circumference || selectedBaby.birth_head_circumference || '35.0'} <span className="text-sm font-bold text-slate-500">cm</span></div>
+                    <div className="pod-subtext">Cranial Growth</div>
+                  </div>
+                </div>
+
+                {/* Vaccines Pod */}
+                <div className="kido-stat-pod kido-stat-pod-purple">
+                  <div className="pod-header-row">
+                    <div className="pod-icon-pod">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <span className="pod-percentile-pill">
+                      ● {stats.completedPct}%
+                    </span>
+                  </div>
+                  <div>
+                    <div className="pod-label">Immunization</div>
+                    <div className="pod-value">{stats.vaccines}</div>
+                    <div className="pod-subtext">Doses Completed</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Today's Care Checklist */}
+            {/* Today's Care Routine Checklist */}
             <div className="kido-glass-card p-6">
-              <div className="mb-6 flex justify-between items-center flex-wrap gap-2">
+              <div className="flex justify-between items-center flex-wrap gap-2">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Today's Care</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">Check completed activities to maintain a consistent daily routine</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Today's Care Routine</h3>
+                    <span className="px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
+                      {checkedCount === 6 ? '🎉 All Complete!' : `${checkedCount} of 6 Completed`}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">Check off daily tasks as you care for {selectedBaby.name}</p>
                 </div>
-                <span className="text-xs font-bold text-sky-700 px-3.5 py-1.5 bg-sky-50 border border-sky-100 rounded-full">
-                  {['breakfast', 'lunch', 'snack', 'dinner', 'nap', 'medicine'].filter(item => checkedItems[`${new Date().toISOString().split('T')[0]}-${selectedBaby.id}-${item}`]).length} / 6 Tracked
+                <span className="text-xs font-extrabold text-sky-600 px-3.5 py-1.5 bg-sky-50 border border-sky-100 rounded-full">
+                  {Math.round((checkedCount / 6) * 100)}% Today
                 </span>
+              </div>
+
+              {/* Animated Progress Bar */}
+              <div className="checklist-progress-bar-wrap">
+                <div 
+                  className="checklist-progress-bar-fill" 
+                  style={{ width: `${Math.round((checkedCount / 6) * 100)}%` }}
+                ></div>
               </div>
 
               {/* Grid checklists */}
@@ -474,17 +633,21 @@ const Dashboard: React.FC = () => {
                   const itemKey = `${todayStr}-${selectedBaby.id}-${item.key}`;
                   const isChecked = !!checkedItems[itemKey];
                   return (
-                    <button
+                    <div
                       key={item.key}
                       onClick={() => toggleCheck(item.key)}
-                      className={`flex flex-col items-start p-3.5 border rounded-2xl text-left cursor-pointer transition-all hover-scale ${isChecked ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-sm' : 'bg-slate-50/60 border-slate-100 text-slate-800 hover:bg-sky-50/50 hover:border-sky-200'}`}
+                      className={`checklist-card-item ${isChecked ? 'completed' : ''}`}
                     >
-                      <div className="flex items-center gap-2 w-full justify-between">
-                        <span className="font-bold text-sm">{item.label}</span>
-                        <CheckCircle size={17} className={isChecked ? 'text-emerald-500 fill-emerald-500/20' : 'text-slate-300'} />
+                      <div className="flex items-center w-full">
+                        <div className="checklist-custom-checkbox">
+                          {isChecked && <CheckCircle size={15} className="text-white fill-white" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="checklist-task-title truncate">{item.label}</div>
+                          <div className="checklist-task-time">{item.desc}</div>
+                        </div>
                       </div>
-                      <span className="text-xs text-slate-400 font-medium mt-1">{item.desc}</span>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
@@ -493,58 +656,99 @@ const Dashboard: React.FC = () => {
             {/* Suggestions Widget Section */}
             {suggestions.length > 0 && (
               <div className="kido-glass-card p-6">
-                <div className="mb-6">
-                  <div className="flex items-center gap-2">
-                    <span className="kido-badge" style={{ background: 'var(--pastel-mint)', color: 'var(--success)' }}>Personalized</span>
-                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Suggested for {selectedBaby.name}</h3>
+                <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="kido-hero-badge text-xs" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#047857' }}>
+                        💡 Personalized Advice
+                      </span>
+                      <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Care Recommendations</h3>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">Pediatric insights curated specifically for {selectedBaby.name}'s age</p>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">Recommendations tailored to child's age group and current progress</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {suggestions.map((item, idx) => (
-                    <div 
-                      key={idx} 
-                      className="p-4 border border-slate-100 rounded-2xl flex flex-col items-start bg-white/70 shadow-sm hover-scale cursor-pointer transition-all hover:border-sky-200"
-                      style={{ animationDelay: `${idx * 0.4}s` }}
-                      onClick={() => {
-                        if (item.category === 'nutrition') navigate(`/nutrition/${selectedBaby.id}`);
-                        else if (item.category === 'growth') navigate(`/growth/${selectedBaby.id}`);
-                        else if (item.category === 'development') navigate(`/development/${selectedBaby.id}`);
-                      }}
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center text-xl mb-3 shadow-sm">{item.icon}</div>
-                      <h4 className="font-bold text-sm text-slate-800 mb-1">{item.title}</h4>
-                      <p className="text-xs text-slate-500 font-medium line-clamp-3 leading-relaxed flex-grow">
-                        {item.description || item.text}
-                      </p>
-                      <span className="mt-3 text-xs font-bold text-sky-600 hover:underline">Explore →</span>
-                    </div>
-                  ))}
+                  {suggestions.map((item, idx) => {
+                    const cat = item.category || 'nutrition';
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`kido-suggestion-pill-card category-${cat}`}
+                        onClick={() => {
+                          if (item.category === 'nutrition') navigate(`/nutrition/${selectedBaby.id}`);
+                          else if (item.category === 'growth') navigate(`/growth/${selectedBaby.id}`);
+                          else if (item.category === 'development') navigate(`/development/${selectedBaby.id}`);
+                        }}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <div className="text-2xl">{item.icon}</div>
+                          <span className="kido-sug-tag">
+                            {cat === 'nutrition' && '🥗 Nutrition'}
+                            {cat === 'sleep' && '🌙 Rest'}
+                            {cat === 'vaccine' && '🩺 Health'}
+                            {cat === 'milestone' && '🧸 Play'}
+                            {!['nutrition', 'sleep', 'vaccine', 'milestone'].includes(cat) && '✨ Care'}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{item.title}</h4>
+                        <p className="text-xs text-slate-500 font-medium line-clamp-3 leading-relaxed flex-grow">
+                          {item.description || item.text}
+                        </p>
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-sky-600">
+                          <span>Explore Details</span>
+                          <ArrowUpRight size={14} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Growth Weight Plot Card */}
+            {/* Growth Weight Plot Card with Custom Glassmorphic Tooltip */}
             {weightChartData.length > 1 && (
               <div className="kido-glass-card p-6">
                 <div className="mb-6 flex justify-between items-center">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Growth Weight Trend</h3>
+                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Growth Weight Trend</h3>
                     <p className="text-xs text-slate-400 mt-0.5">Recent physical weight measurements over time</p>
                   </div>
-                  <button onClick={() => navigate(`/growth/${selectedBaby.id}`)} className="text-xs font-bold text-sky-600 hover:underline">
-                    View Full Growth →
+                  <button onClick={() => navigate(`/growth/${selectedBaby.id}`)} className="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1">
+                    <span>Full Growth Analytics</span>
+                    <ArrowUpRight size={13} />
                   </button>
                 </div>
 
-                <div style={{ width: '100%', height: 170 }}>
+                <div style={{ width: '100%', height: 180 }}>
                   <ResponsiveContainer>
                     <LineChart data={weightChartData}>
                       <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
                       <YAxis stroke="#94a3b8" fontSize={11} width={30} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ borderRadius: '14px', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 12px 30px rgba(0,0,0,0.08)' }} />
-                      <Line type="monotone" dataKey="Weight" stroke="#0ea5e9" strokeWidth={3} dot={{ r: 4, stroke: '#fff', strokeWidth: 2 }} />
+                      <Tooltip 
+                        content={({ active, payload, label }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="recharts-custom-tooltip">
+                                <div className="recharts-custom-tooltip-date">{label}</div>
+                                <div className="recharts-custom-tooltip-value">
+                                  <Scale size={14} />
+                                  <span>{payload[0].value} kg</span>
+                                </div>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }} 
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="Weight" 
+                        stroke="#0ea5e9" 
+                        strokeWidth={3.5} 
+                        dot={{ r: 5, stroke: '#ffffff', strokeWidth: 2, fill: '#0ea5e9' }} 
+                        activeDot={{ r: 7, stroke: '#ffffff', strokeWidth: 3, fill: '#0284c7' }}
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -560,10 +764,21 @@ const Dashboard: React.FC = () => {
             <div className="kido-glass-card p-6">
               <div className="mb-6 flex justify-between items-center">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Upcoming Schedule</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">Pediatric visits and due dose schedules</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Upcoming Schedule</h3>
+                    <span className="px-2 py-0.5 bg-sky-50 text-sky-700 text-xs font-bold rounded-full border border-sky-100">
+                      {upcomingTimeline.length} Events
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">Pediatric visits and due immunization doses</p>
                 </div>
-                <Clock size={18} className="text-slate-400" />
+                <button 
+                  onClick={() => navigate(`/health-records/${selectedBaby.id}`)}
+                  className="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1"
+                >
+                  <span>All</span>
+                  <ArrowUpRight size={13} />
+                </button>
               </div>
 
               {upcomingTimeline.length === 0 ? (
@@ -573,41 +788,59 @@ const Dashboard: React.FC = () => {
                   <p className="text-xs text-slate-400 mt-0.5">No immediate events scheduled</p>
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
-                  {upcomingTimeline.map((item, idx) => (
-                    <div key={idx} className="flex gap-3.5 items-start p-3.5 bg-slate-50/70 border border-slate-100 rounded-2xl hover:border-sky-200 transition-colors">
-                      <div className="text-2xl mt-0.5">{item.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <span 
-                          className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mb-1.5"
-                          style={{ background: item.badgeColor, color: 'var(--text)' }}
-                        >
-                          {item.badgeText}
-                        </span>
-                        <h4 className="font-bold text-sm text-slate-800 truncate">{item.title}</h4>
-                        <p className="text-xs text-slate-400 font-semibold mt-1">
-                          📅 {new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                        </p>
+                <div className="flex flex-col gap-3">
+                  {upcomingTimeline.map((item, idx) => {
+                    const daysUntil = Math.ceil((new Date(item.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                    const countdownText = daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : daysUntil > 1 ? `In ${daysUntil}d` : 'Past due';
+                    const isUrgent = daysUntil <= 2;
+                    return (
+                      <div key={idx} className="flex gap-3.5 items-start p-3.5 bg-white/80 border border-slate-100 rounded-2xl hover:border-sky-200 hover:shadow-sm transition-all">
+                        <div className="text-2xl mt-0.5">{item.icon}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span 
+                              className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold"
+                              style={{ background: item.badgeColor, color: 'var(--text)' }}
+                            >
+                              {item.badgeText}
+                            </span>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isUrgent ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}`}>
+                              {countdownText}
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-sm text-slate-800 truncate">{item.title}</h4>
+                          <p className="text-xs text-slate-400 font-semibold mt-1">
+                            📅 {new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             {/* Record Tracking Completeness Indicators */}
             <div className="kido-glass-card p-6">
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Record Completeness</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Coverage of your child's developmental records</p>
+              <div className="mb-6 flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Record Completeness</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Coverage of your child's developmental records</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-extrabold text-sky-600">
+                    {Math.round((completeness.vax + completeness.growth + completeness.nutrition + completeness.milestones) / 4)}%
+                  </span>
+                  <span className="text-xs text-slate-400 block font-medium">Overall</span>
+                </div>
               </div>
 
               <div className="flex flex-col gap-4">
                 {[
-                  { label: 'Vaccinations', value: completeness.vax, color: 'bg-emerald-500' },
-                  { label: 'Growth Tracking', value: completeness.growth, color: 'bg-sky-500' },
-                  { label: 'Nutrition Tracking', value: completeness.nutrition, color: 'bg-amber-500' },
-                  { label: 'Milestones Completed', value: completeness.milestones, color: 'bg-violet-500' },
+                  { label: 'Vaccinations', value: completeness.vax, gradient: 'from-emerald-400 to-teal-500' },
+                  { label: 'Growth Tracking', value: completeness.growth, gradient: 'from-sky-400 to-blue-500' },
+                  { label: 'Nutrition Tracking', value: completeness.nutrition, gradient: 'from-amber-400 to-orange-500' },
+                  { label: 'Milestones Completed', value: completeness.milestones, gradient: 'from-purple-400 to-indigo-500' },
                 ].map(metric => (
                   <div key={metric.label}>
                     <div className="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
@@ -615,7 +848,10 @@ const Dashboard: React.FC = () => {
                       <span>{metric.value}%</span>
                     </div>
                     <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                      <div className={`h-full ${metric.color} transition-all duration-500 rounded-full`} style={{ width: `${metric.value}%` }}></div>
+                      <div 
+                        className={`h-full bg-gradient-to-r ${metric.gradient} transition-all duration-500 rounded-full`} 
+                        style={{ width: `${metric.value}%` }}
+                      ></div>
                     </div>
                   </div>
                 ))}

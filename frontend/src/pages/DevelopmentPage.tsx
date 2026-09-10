@@ -12,7 +12,8 @@ import {
   ChevronLeft, 
   Moon, 
   Plus, 
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 type Tab = 'milestones' | 'sleep' | 'medicines';
@@ -236,6 +237,11 @@ const DevelopmentPage: React.FC = () => {
           <div className="kido-shape"></div>
         </div>
 
+        {/* Floating Twinkles & Delight Accents */}
+        <div className="kido-hero-twinkle kido-hero-twinkle-1">✨</div>
+        <div className="kido-hero-twinkle kido-hero-twinkle-2">🧸</div>
+        <div className="kido-hero-twinkle kido-hero-twinkle-3">✨</div>
+
         <div className="kido-page-hero-inner">
           <div className="kido-page-hero-content">
             <div className="flex items-center gap-3 mb-3 flex-wrap">
@@ -247,7 +253,8 @@ const DevelopmentPage: React.FC = () => {
                 <span>Dashboard</span>
               </button>
               <span className="kido-hero-badge">
-                🧠 Cognitive, Sleep & Care
+                <Sparkles size={13} className="text-amber-300" />
+                <span>Cognitive, Sleep & Care</span>
               </span>
             </div>
 

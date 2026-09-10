@@ -3556,5 +3556,628 @@ h1, h2, h3, h4, h5, h6, .brand-tag, .kido-logo, .kido-badge, .kido-hero-title, .
   margin-top: 0.45rem;
 }
 
+/* ==========================================================================
+   ✨ COMPREHENSIVE UI ENHANCEMENT SUITE (BabyCare360)
+   ========================================================================== */
 
+/* Typography Branding */
+h1, h2, h3, .brand-font {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
+}
 
+/* --- 1. Keyframe Animations --- */
+@keyframes floatTwinkle {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.15) rotate(15deg);
+    opacity: 1;
+  }
+}
+
+@keyframes softPulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+  }
+}
+
+@keyframes checkBounce {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heartPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fabMenuPop {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmerWave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Floating Twinkles in Hero */
+.kido-hero-twinkle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.6));
+  animation: floatTwinkle 4s ease-in-out infinite;
+}
+.kido-hero-twinkle-1 {
+  top: 15%;
+  left: 8%;
+  font-size: 1.5rem;
+  animation-delay: 0s;
+}
+.kido-hero-twinkle-2 {
+  bottom: 25%;
+  left: 28%;
+  font-size: 1.25rem;
+  animation-delay: 1.5s;
+}
+.kido-hero-twinkle-3 {
+  top: 20%;
+  right: 22%;
+  font-size: 1.4rem;
+  animation-delay: 2.2s;
+}
+
+/* Time Greeting Badge */
+.kido-time-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Interactive Baby Mood Capsule */
+.kido-mood-capsule {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.kido-mood-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.15);
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kido-mood-badge:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.22);
+}
+
+.kido-mood-dropdown {
+  position: absolute;
+  top: 125%;
+  left: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 16px;
+  padding: 0.4rem;
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 190px;
+  animation: fabMenuPop 0.22s ease-out forwards;
+}
+
+.kido-mood-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: none;
+}
+
+.kido-mood-option:hover {
+  background: #f1f5f9;
+  transform: translateX(3px);
+  color: #0284c7;
+}
+
+.kido-mood-option.active {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+}
+
+/* --- 2. Micro-Metric Pastel Stat Pods --- */
+.kido-stat-pods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.kido-stat-pod {
+  position: relative;
+  border-radius: 20px;
+  padding: 1.25rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.kido-stat-pod:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.09);
+}
+
+.kido-stat-pod-sky {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: rgba(186, 230, 253, 0.8);
+}
+.kido-stat-pod-mint {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: rgba(187, 247, 208, 0.8);
+}
+.kido-stat-pod-rose {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+  border-color: rgba(254, 205, 211, 0.8);
+}
+.kido-stat-pod-purple {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-color: rgba(233, 213, 255, 0.8);
+}
+.kido-stat-pod-amber {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: rgba(253, 230, 138, 0.8);
+}
+
+.pod-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.pod-icon-pod {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.kido-stat-pod-sky .pod-icon-pod {
+  background: #0ea5e9;
+  color: #ffffff;
+}
+.kido-stat-pod-mint .pod-icon-pod {
+  background: #10b981;
+  color: #ffffff;
+}
+.kido-stat-pod-rose .pod-icon-pod {
+  background: #f43f5e;
+  color: #ffffff;
+}
+.kido-stat-pod-purple .pod-icon-pod {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+.kido-stat-pod-amber .pod-icon-pod {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.pod-percentile-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.kido-stat-pod-sky .pod-percentile-pill {
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+.kido-stat-pod-mint .pod-percentile-pill {
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+.kido-stat-pod-rose .pod-percentile-pill {
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+.kido-stat-pod-purple .pod-percentile-pill {
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+}
+
+.pod-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.pod-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.pod-subtext {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  font-weight: 600;
+}
+
+/* --- 3. Interactive Checklist Polish --- */
+.checklist-progress-bar-wrap {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.checklist-progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0ea5e9, #10b981);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.checklist-card-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.65rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.checklist-card-item:hover {
+  border-color: #38bdf8;
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.08);
+}
+
+.checklist-card-item.completed {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  opacity: 0.75;
+}
+
+.checklist-card-item.completed .checklist-task-title {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.checklist-custom-checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.checklist-card-item.completed .checklist-custom-checkbox {
+  background: #10b981;
+  border-color: #10b981;
+  animation: checkBounce 0.3s ease;
+}
+
+.checklist-task-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+  transition: color 0.2s ease;
+}
+
+.checklist-task-time {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* --- 4. Suggestions Category Styling --- */
+.kido-suggestion-pill-card {
+  border-radius: 18px;
+  padding: 1.15rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.kido-suggestion-pill-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(14, 165, 233, 0.1);
+  border-color: #bae6fd;
+}
+
+.kido-suggestion-pill-card.category-nutrition {
+  border-left: 4px solid #f97316;
+}
+.kido-suggestion-pill-card.category-sleep {
+  border-left: 4px solid #8b5cf6;
+}
+.kido-suggestion-pill-card.category-vaccine {
+  border-left: 4px solid #0ea5e9;
+}
+.kido-suggestion-pill-card.category-milestone {
+  border-left: 4px solid #10b981;
+}
+
+.kido-sug-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.category-nutrition .kido-sug-tag {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.category-sleep .kido-sug-tag {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+.category-vaccine .kido-sug-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.category-milestone .kido-sug-tag {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* --- 5. Quick Action Floating Action Button (FAB) --- */
+.kido-fab-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .kido-fab-container {
+    bottom: 5rem;
+    right: 1.25rem;
+  }
+}
+
+.kido-fab-button {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #38bdf8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.42), 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.kido-fab-button:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 16px 36px rgba(14, 165, 233, 0.52);
+}
+
+.kido-fab-button.open {
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 0 12px 28px rgba(225, 29, 72, 0.42);
+}
+
+.kido-fab-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+}
+
+.kido-fab-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: none;
+  animation: fabMenuPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.kido-fab-item:hover .kido-fab-item-label {
+  transform: translateX(-4px);
+  background: #ffffff;
+  color: #0284c7;
+}
+
+.kido-fab-item:hover .kido-fab-item-icon {
+  transform: scale(1.12);
+}
+
+.kido-fab-item-label {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #0f172a;
+  padding: 0.45rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.kido-fab-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s ease;
+}
+
+.kido-fab-icon-feed {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+.kido-fab-icon-sleep {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+.kido-fab-icon-weight {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+}
+.kido-fab-icon-medicine {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.kido-fab-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(3px);
+  z-index: 998;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+/* --- 6. Custom Recharts Glassmorphic Tooltip --- */
+.recharts-custom-tooltip {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 14px;
+  padding: 0.65rem 0.9rem;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12);
+}
+
+.recharts-custom-tooltip-date {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.recharts-custom-tooltip-value {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}

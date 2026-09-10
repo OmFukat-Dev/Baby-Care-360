@@ -8,7 +8,11 @@ import {
   ChevronLeft, 
   Plus, 
   Edit, 
-  Trash2
+  Trash2,
+  Sparkles,
+  Scale,
+  Ruler,
+  Brain
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -174,6 +178,10 @@ const GrowthPage: React.FC = () => {
           <div className="kido-shape"></div>
         </div>
 
+        {/* Floating Twinkles & Delight Accents */}
+        <div className="kido-hero-twinkle kido-hero-twinkle-1">✨</div>
+        <div className="kido-hero-twinkle kido-hero-twinkle-2">📈</div>
+
         <div className="kido-page-hero-inner">
           <div className="kido-page-hero-content">
             <div className="flex items-center gap-3 mb-3 flex-wrap">
@@ -185,7 +193,8 @@ const GrowthPage: React.FC = () => {
                 <span>Dashboard</span>
               </button>
               <span className="kido-hero-badge">
-                📈 Physical Growth & Velocity
+                <Sparkles size={13} className="text-amber-300" />
+                <span>Physical Growth & Velocity</span>
               </span>
             </div>
 
@@ -246,29 +255,58 @@ const GrowthPage: React.FC = () => {
 
       {error && <div className="error-banner mb-6">{error}</div>}
 
-      {/* Profile metric cards summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {[
-          { label: 'Weight', value: latestMetric.weight, unit: 'kg', icon: '⚖️', color: 'border-l-sky-500', pill: 'var(--pastel-sky)' },
-          { label: 'Height', value: latestMetric.height, unit: 'cm', icon: '📏', color: 'border-l-emerald-500', pill: 'var(--pastel-mint)' },
-          { label: 'Head Circumference', value: latestMetric.head, unit: 'cm', icon: '🧠', color: 'border-l-violet-500', pill: 'var(--pastel-lilac)' }
-        ].map((card, idx) => (
-          <div key={idx} className={`kido-glass-card p-6 border-l-4 ${card.color}`}>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">{card.label}</span>
-              <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm" style={{ background: card.pill }}>{card.icon}</span>
+      {/* Pastel Metric Stat Pods Summary Grid */}
+      <div className="kido-stat-pods-grid mb-8">
+        {/* Weight Pod */}
+        <div className="kido-stat-pod kido-stat-pod-sky">
+          <div className="pod-header-row">
+            <div className="pod-icon-pod">
+              <Scale size={20} />
             </div>
-            <div className="flex items-baseline gap-1 mt-2">
-              <span className="text-3xl font-extrabold text-slate-800">{card.value}</span>
-              {card.value !== '--' && <span className="text-sm text-slate-400 font-bold">{card.unit}</span>}
-            </div>
-            {latestMetric.date ? (
-              <span className="text-xs text-slate-400 font-medium block mt-3">Updated {latestMetric.date}</span>
-            ) : (
-              <span className="text-xs text-slate-400 font-medium block mt-3">No records entered</span>
-            )}
+            <span className="pod-percentile-pill">
+              ● 50th %ile
+            </span>
           </div>
-        ))}
+          <div>
+            <div className="pod-label">Current Weight</div>
+            <div className="pod-value">{latestMetric.weight} <span className="text-sm font-bold text-slate-500">kg</span></div>
+            <div className="pod-subtext">{latestMetric.date ? `Updated ${latestMetric.date}` : 'No records yet'}</div>
+          </div>
+        </div>
+
+        {/* Height Pod */}
+        <div className="kido-stat-pod kido-stat-pod-mint">
+          <div className="pod-header-row">
+            <div className="pod-icon-pod">
+              <Ruler size={20} />
+            </div>
+            <span className="pod-percentile-pill">
+              ● Optimal
+            </span>
+          </div>
+          <div>
+            <div className="pod-label">Current Height</div>
+            <div className="pod-value">{latestMetric.height} <span className="text-sm font-bold text-slate-500">cm</span></div>
+            <div className="pod-subtext">{latestMetric.date ? `Updated ${latestMetric.date}` : 'No records yet'}</div>
+          </div>
+        </div>
+
+        {/* Head Pod */}
+        <div className="kido-stat-pod kido-stat-pod-rose">
+          <div className="pod-header-row">
+            <div className="pod-icon-pod">
+              <Brain size={20} />
+            </div>
+            <span className="pod-percentile-pill">
+              ● Healthy
+            </span>
+          </div>
+          <div>
+            <div className="pod-label">Head Circumference</div>
+            <div className="pod-value">{latestMetric.head} <span className="text-sm font-bold text-slate-500">cm</span></div>
+            <div className="pod-subtext">{latestMetric.date ? `Updated ${latestMetric.date}` : 'No records yet'}</div>
+          </div>
+        </div>
       </div>
 
       {/* Record details form overlay */}
@@ -306,7 +344,7 @@ const GrowthPage: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div className="kido-glass-card p-6">
               <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
-                <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans' }}>Growth Curves</h3>
+                <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, Plus Jakarta Sans' }}>Growth Curves</h3>
                 
                 {/* Trend Tabs toggle */}
                 <div className="flex border border-slate-200/80 rounded-full p-1 bg-slate-50">
@@ -333,7 +371,22 @@ const GrowthPage: React.FC = () => {
                     <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                    <Tooltip contentStyle={{ borderRadius: '14px', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }} />
+                    <Tooltip 
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="recharts-custom-tooltip">
+                              <div className="recharts-custom-tooltip-date">{label}</div>
+                              <div className="recharts-custom-tooltip-value">
+                                <span>{payload[0].name}:</span>
+                                <span>{payload[0].value}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }} 
+                    />
                     {activeTab === 'weight' && (
                       <Line type="monotone" dataKey="Weight" name="Weight (kg)" stroke="#0ea5e9" strokeWidth={3} dot={{ r: 4, stroke: '#fff', strokeWidth: 2 }} />
                     )}
