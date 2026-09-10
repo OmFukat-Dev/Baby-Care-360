@@ -44,6 +44,26 @@ const Dashboard: React.FC = () => {
   const [babyMood, setBabyMood] = useState<string>('happy');
   const [showMoodPicker, setShowMoodPicker] = useState<boolean>(false);
 
+  // Smart Parenting Daily Tips Ticker state
+  const parentingTips = useMemo(() => [
+    "Tummy time for 15-20 minutes daily strengthens your baby's neck, back, and shoulder muscles.",
+    "Establishing a predictable 4-step bedtime routine (bath, massage, lullaby, cuddle) improves infant sleep latency.",
+    "Vitamin D supplementation (400 IU daily) is recommended for all exclusively or partially breastfed infants.",
+    "Responding promptly to your baby's cries in early months builds strong emotional attachment and security.",
+    "Introduce single-ingredient solid foods one at a time with 3-5 days between each new food to detect sensitivities.",
+    "Reading storybooks aloud daily from 3 months stimulates infant cognitive auditory pattern recognition."
+  ], []);
+  const [tipIndex, setTipIndex] = useState<number>(0);
+  const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleAudioStatus = (e: any) => {
+      setIsPlayingAudio(!!e.detail?.isPlaying);
+    };
+    window.addEventListener('whitenoise-status', handleAudioStatus);
+    return () => window.removeEventListener('whitenoise-status', handleAudioStatus);
+  }, []);
+
   const moods: { [key: string]: { label: string; emoji: string } } = {
     happy: { label: 'Happy & Active', emoji: '😊' },
     content: { label: 'Full & Content', emoji: '🍼' },
@@ -145,6 +165,9 @@ const Dashboard: React.FC = () => {
         localStorage.setItem('active_baby_id', newBaby.id.toString());
       }
       setShowProfileForm(false);
+      window.dispatchEvent(new CustomEvent('babycare-celebrate', {
+        detail: { message: `🎉 Profile for ${data.name || 'baby'} successfully updated!` }
+      }));
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not save the baby profile.');
       throw err;
@@ -197,14 +220,29 @@ const Dashboard: React.FC = () => {
     return `${totalMonths} month${totalMonths !== 1 ? 's' : ''} ${days} day${days !== 1 ? 's' : ''}`;
   }
 
-  // Toggle checklist item
+  // Toggle checklist item with celebratory feedback
   const toggleCheck = (item: string) => {
     if (!selectedBaby) return;
     const todayStr = new Date().toISOString().split('T')[0];
     const key = `${todayStr}-${selectedBaby.id}-${item}`;
     const newVal = !checkedItems[key];
-    setCheckedItems(prev => ({ ...prev, [key]: newVal }));
+    const updated = { ...checkedItems, [key]: newVal };
+    setCheckedItems(updated);
     localStorage.setItem(key, newVal ? 'true' : 'false');
+
+    if (newVal) {
+      const items = ['breakfast', 'lunch', 'snack', 'dinner', 'nap', 'medicine'];
+      const totalChecked = items.filter(i => updated[`${todayStr}-${selectedBaby.id}-${i}`]).length;
+      if (totalChecked === items.length) {
+        window.dispatchEvent(new CustomEvent('babycare-celebrate', {
+          detail: { message: `🎉 Amazing! All 6 daily care routines completed for ${selectedBaby.name}!` }
+        }));
+      } else {
+        window.dispatchEvent(new CustomEvent('babycare-celebrate', {
+          detail: { message: `✨ ${item.charAt(0).toUpperCase() + item.slice(1)} logged for ${selectedBaby.name}!` }
+        }));
+      }
+    }
   };
 
   // Count checked daily items
@@ -428,6 +466,15 @@ const Dashboard: React.FC = () => {
                   )}
                 </div>
 
+                {/* Infant Soothing Audio Capsule */}
+                <button 
+                  className={`kido-whitenoise-capsule ${isPlayingAudio ? 'playing' : ''}`}
+                  onClick={() => window.dispatchEvent(new CustomEvent('babycare-open-whitenoise'))}
+                  title="Open Infant Soothing Sounds & Lullaby Machine"
+                >
+                  <span>{isPlayingAudio ? '🎵 Sound Playing' : '🎧 Soothing Audio'}</span>
+                </button>
+
                 <span className="kido-hero-chip">
                   🎂 {calculateAge(selectedBaby.date_of_birth)}
                 </span>
@@ -442,6 +489,21 @@ const Dashboard: React.FC = () => {
                 </span>
               </div>
             )}
+
+            {/* Smart Pediatric Care Daily Tip Ticker */}
+            <div className="parenting-tip-banner">
+              <div className="flex items-center gap-2 overflow-hidden text-left">
+                <span className="font-bold text-amber-300 shrink-0">💡 Daily Care Tip:</span>
+                <span className="truncate">{parentingTips[tipIndex]}</span>
+              </div>
+              <button 
+                className="parenting-tip-next-btn"
+                onClick={() => setTipIndex((prev) => (prev + 1) % parentingTips.length)}
+                title="Read next pediatric tip"
+              >
+                Next Tip 💡
+              </button>
+            </div>
           </div>
 
           {/* Right Wobbly Frame Hero Visual */}

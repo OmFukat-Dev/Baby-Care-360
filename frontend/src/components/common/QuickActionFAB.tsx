@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Plus, Apple, Moon, TrendingUp, Pill } from 'lucide-react';
+import QuickLogModal, { QuickLogTab } from './QuickLogModal';
 
 interface QuickActionFABProps {
   currentBabyId?: number;
+  onLoggedSuccess?: () => void;
 }
 
-export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId }) => {
+export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId, onLoggedSuccess }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const [quickLogTab, setQuickLogTab] = useState<QuickLogTab | null>(null);
 
-  const handleAction = (path: string) => {
+  const openQuickLog = (tab: QuickLogTab) => {
     setIsOpen(false);
-    if (currentBabyId) {
-      navigate(path);
-    } else {
-      navigate('/');
-    }
+    setQuickLogTab(tab);
   };
 
   const id = currentBabyId || 1;
@@ -31,15 +28,29 @@ export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId })
         />
       )}
 
+      {/* Instant 1-Tap Quick Logger Modal */}
+      {quickLogTab && (
+        <QuickLogModal
+          isOpen={true}
+          initialTab={quickLogTab}
+          babyId={id}
+          onClose={() => setQuickLogTab(null)}
+          onSuccess={() => {
+            onLoggedSuccess?.();
+            window.location.reload(); // Quick refresh if on the active page
+          }}
+        />
+      )}
+
       <div className="kido-fab-container">
         {isOpen && (
           <div className="kido-fab-menu" role="menu">
             <button
               className="kido-fab-item"
-              onClick={() => handleAction(`/nutrition/${id}`)}
+              onClick={() => openQuickLog('feed')}
               role="menuitem"
             >
-              <span className="kido-fab-item-label">🍼 Log Feed / Meal</span>
+              <span className="kido-fab-item-label">🍼 1-Tap Quick Feed</span>
               <div className="kido-fab-item-icon kido-fab-icon-feed">
                 <Apple size={20} />
               </div>
@@ -47,10 +58,10 @@ export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId })
 
             <button
               className="kido-fab-item"
-              onClick={() => handleAction(`/development/${id}`)}
+              onClick={() => openQuickLog('sleep')}
               role="menuitem"
             >
-              <span className="kido-fab-item-label">💤 Track Sleep</span>
+              <span className="kido-fab-item-label">💤 1-Tap Quick Sleep</span>
               <div className="kido-fab-item-icon kido-fab-icon-sleep">
                 <Moon size={20} />
               </div>
@@ -58,10 +69,10 @@ export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId })
 
             <button
               className="kido-fab-item"
-              onClick={() => handleAction(`/growth/${id}`)}
+              onClick={() => openQuickLog('growth')}
               role="menuitem"
             >
-              <span className="kido-fab-item-label">⚖️ Record Growth</span>
+              <span className="kido-fab-item-label">⚖️ 1-Tap Quick Growth</span>
               <div className="kido-fab-item-icon kido-fab-icon-weight">
                 <TrendingUp size={20} />
               </div>
@@ -69,10 +80,10 @@ export const QuickActionFAB: React.FC<QuickActionFABProps> = ({ currentBabyId })
 
             <button
               className="kido-fab-item"
-              onClick={() => handleAction(`/development/${id}`)}
+              onClick={() => openQuickLog('medicine')}
               role="menuitem"
             >
-              <span className="kido-fab-item-label">💊 Log Prescription</span>
+              <span className="kido-fab-item-label">💊 1-Tap Quick Medicine</span>
               <div className="kido-fab-item-icon kido-fab-icon-medicine">
                 <Pill size={20} />
               </div>

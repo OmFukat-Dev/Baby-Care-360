@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -11,7 +11,10 @@ import {
   ChevronLeft, 
   ChevronRight,
   LogOut,
-  User as UserIcon
+  User as UserIcon,
+  Moon,
+  Sun,
+  Music
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,6 +26,27 @@ const Sidebar: React.FC<SidebarProps> = ({ currentBabyId }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  // Night mode and White noise audio states
+  const [isNightMode, setIsNightMode] = useState<boolean>(() => {
+    return document.body.classList.contains('night-mode') || localStorage.getItem('babycare_theme') === 'night';
+  });
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  useEffect(() => {
+    const handleAudioStatus = (e: any) => {
+      setIsPlayingAudio(!!e.detail?.isPlaying);
+    };
+    const handleNightToggle = () => {
+      setIsNightMode(document.body.classList.contains('night-mode'));
+    };
+    window.addEventListener('whitenoise-status', handleAudioStatus);
+    window.addEventListener('babycare-toggle-nightmode', handleNightToggle);
+    return () => {
+      window.removeEventListener('whitenoise-status', handleAudioStatus);
+      window.removeEventListener('babycare-toggle-nightmode', handleNightToggle);
+    };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -104,6 +128,44 @@ const Sidebar: React.FC<SidebarProps> = ({ currentBabyId }) => {
           })}
         </ul>
       </nav>
+
+      {/* Quick Sound & Theme Controls */}
+      <div className="sidebar-tools-container" style={{ padding: collapsed ? '0.5rem' : '0.5rem 0.8rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(226, 232, 240, 0.6)' }}>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('babycare-open-whitenoise'))}
+          className={`sidebar-nav-link ${isPlayingAudio ? 'active' : ''}`}
+          style={{ width: '100%', justifyContent: collapsed ? 'center' : 'flex-start' }}
+          title="Soothing Sound Machine"
+        >
+          <Music size={18} className={isPlayingAudio ? 'text-emerald-500' : 'nav-icon'} />
+          {!collapsed && (
+            <span className="nav-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <span>Lullabies</span>
+              {isPlayingAudio && <span style={{ fontSize: '0.65rem', background: '#10b981', color: '#fff', padding: '1px 6px', borderRadius: '10px' }}>Playing</span>}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('babycare-toggle-nightmode'));
+            setIsNightMode(!isNightMode);
+          }}
+          className="sidebar-nav-link"
+          style={{ width: '100%', justifyContent: collapsed ? 'center' : 'flex-start' }}
+          title={isNightMode ? 'Switch to Daylight Mode' : 'Switch to Soft Night-Care Mode'}
+        >
+          {isNightMode ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-indigo-400" />}
+          {!collapsed && (
+            <span className="nav-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <span>{isNightMode ? 'Night Care' : 'Daylight'}</span>
+              <span style={{ fontSize: '0.65rem', background: isNightMode ? '#334155' : '#e0f2fe', color: isNightMode ? '#38bdf8' : '#0369a1', padding: '1px 6px', borderRadius: '10px' }}>
+                {isNightMode ? 'Dark' : 'Soft'}
+              </span>
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Sidebar Footer / User Profile */}
       {user && (
